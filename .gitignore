@@ -35,3 +35,6 @@ Thumbs.db
 # Temp
 *.tmp
 *.bak
+
+# 文档（不上传）
+docs/
