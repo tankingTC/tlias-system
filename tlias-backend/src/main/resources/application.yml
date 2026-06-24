@@ -37,12 +37,12 @@ pagehelper:
   reasonable: true
   support-methods-arguments: true
 
-# JWT配置
+# JWT config
 jwt:
   secret: ${JWT_SECRET:tlias-jwt-secret-key-for-signing-token-must-be-long-enough}
-  ttl: 7200000  # 2小时（毫秒）
+  ttl: 7200000
 
-# MinIO / Sealos OSS 配置（S3兼容对象存储）
+# MinIO / Sealos OSS config
 minio:
   endpoint: ${MINIO_ENDPOINT:https://objectstorageapi.hzh.sealos.run}
   access-key: ${MINIO_ACCESS_KEY:e09w3hj8}

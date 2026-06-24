@@ -41,6 +41,14 @@ public interface DeptMapper {
     void deleteById(Integer id);
 
     /**
+     * 根据ID查询单个部门
+     * @param id 部门ID
+     * @return 部门对象
+     */
+    @Select("SELECT * FROM dept WHERE id = #{id}")
+    Dept selectById(Integer id);
+
+    /**
      * 统计部门总数
      * @return 部门数量
      */

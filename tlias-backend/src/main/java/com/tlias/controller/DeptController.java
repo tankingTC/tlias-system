@@ -29,6 +29,16 @@ public class DeptController {
     }
 
     /**
+     * 根据ID查询部门详情
+     * @param id 部门ID
+     * @return 部门信息
+     */
+    @GetMapping("/{id}")
+    public Result<Dept> getById(@PathVariable Integer id) {
+        return Result.success(deptService.getById(id));
+    }
+
+    /**
      * 新增部门
      * @param dept 部门信息（从请求体获取）
      * @return 操作结果

@@ -32,4 +32,11 @@ public interface DeptService {
      * @param id 待删除部门的ID
      */
     void delete(Integer id);
+
+    /**
+     * 根据ID查询部门详情
+     * @param id 部门ID
+     * @return 部门对象，不存在则返回null
+     */
+    Dept getById(Integer id);
 }
