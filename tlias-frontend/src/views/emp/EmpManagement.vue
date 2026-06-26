@@ -19,10 +19,13 @@
     <el-card class="content-card" shadow="hover">
       <!-- 搜索栏：姓名、性别、入职日期范围筛选 -->
       <div class="search-bar">
+        <span class="search-label">姓名</span>
         <el-input v-model="search.name" placeholder="请输入员工姓名" clearable style="width: 180px" @keyup.enter="loadData" />
+        <span class="search-label">性别</span>
         <el-select v-model="search.gender" placeholder="请选择" clearable style="width: 120px">
           <el-option label="男" :value="1" /><el-option label="女" :value="0" />
         </el-select>
+        <span class="search-label">入职时间</span>
         <el-date-picker v-model="search.begin" type="date" placeholder="开始日期" value-format="YYYY-MM-DD" style="width: 150px" />
         <span style="color: #909399">到</span>
         <el-date-picker v-model="search.end" type="date" placeholder="结束日期" value-format="YYYY-MM-DD" style="width: 150px" />
@@ -216,9 +219,6 @@ function getDefaultForm() {
     workExperience: []
   }
 }
-
-// 职位选项列表
-const jobOptions = ['班主任', '讲师', '学工主管', '教研主管', '咨询师']
 
 // 表单验证规则
 const rules = {

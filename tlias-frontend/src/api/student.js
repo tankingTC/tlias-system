@@ -6,8 +6,6 @@ import request from '../utils/request'
 
 // 分页查询学员列表（支持条件筛选）
 export function getStudents(params) { return request({ url: '/students', method: 'get', params }) }
-// 根据ID获取学员详情
-export function getStudent(id) { return request({ url: `/students/${id}`, method: 'get' }) }
 // 新增学员
 export function addStudent(data) { return request({ url: '/students', method: 'post', data }) }
 // 更新学员信息

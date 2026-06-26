@@ -340,17 +340,47 @@ onUnmounted(() => {
 .stat-card {
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid rgba(0, 0, 0, 0.04);
+  text-align: center;
 }
 .stat-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.07);
 }
 .stat-card:hover .stat-icon {
-  transform: scale(1.1);
+  transform: scale(1.15);
 }
 .stat-icon {
-  transition: transform 0.3s ease;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 24px;
+  margin: 0 auto 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: iconPulse 3s ease-in-out infinite;
+}
+.stat-icon.blue {
+  background: linear-gradient(135deg, #6b8cff, #4a6cf7);
+  box-shadow: 0 4px 14px rgba(107, 140, 255, 0.35);
+}
+.stat-icon.green {
+  background: linear-gradient(135deg, #5ec487, #3ba55d);
+  box-shadow: 0 4px 14px rgba(94, 196, 135, 0.35);
+}
+.stat-icon.orange {
+  background: linear-gradient(135deg, #f0a76a, #e08b3a);
+  box-shadow: 0 4px 14px rgba(240, 167, 106, 0.35);
+}
+.stat-icon.pink {
+  background: linear-gradient(135deg, #e88bc4, #d46ba3);
+  box-shadow: 0 4px 14px rgba(232, 139, 196, 0.35);
+}
+@keyframes iconPulse {
+  0%, 100% { filter: brightness(1); }
+  50%      { filter: brightness(1.08); }
 }
 
 /* ===== 卡片头部 ===== */

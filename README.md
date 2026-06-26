@@ -43,7 +43,6 @@
 | Vue 3 | 3.4+ | 前端框架 (Composition API) |
 | Element Plus | 2.5+ | UI 组件库 |
 | Vue Router | 4.2+ | 路由管理 |
-| Pinia | 2.1+ | 状态管理 |
 | Axios | 1.6+ | HTTP 请求 |
 | ECharts | 5.4+ | 数据可视化 |
 | Vite | 5.0+ | 构建工具 |
@@ -76,8 +75,7 @@ tlias-system/
 │       │   │   └── impl/                      # 实现类
 │       │   ├── mapper/                        # MyBatis 数据访问层 (含COUNT查询)
 │       │   ├── pojo/                          # 实体类/DTO/VO/Result
-│       │   │   ├── entity/Emp.java            # 员工实体 (含@JsonIgnore)
-│       │   │   └── entity/WorkExperience.java # 工作经历实体
+│       │   │   └── entity/                    # 实体类
 │       │   ├── exception/                     # 异常处理
 │       │   │   ├── GlobalExceptionHandler.java # 全局异常 (多类型+HTTP状态码)
 │       │   │   └── BusinessException.java     # 业务异常
@@ -97,7 +95,7 @@ tlias-system/
 │       ├── assets/images/                     # 静态资源
 │       │   └── background.png                 # 登录页背景图
 │       ├── layout/
-│       │   └── MainLayout.vue                 # 主布局 (可折叠侧边栏)
+│       │   └── MainLayout.vue                 # 主布局 (可折叠侧边栏+环绕流光)
 │       ├── views/                             # 页面组件 (11个)
 │       │   ├── Login.vue                      # 登录页 (背景图+玻璃拟态+炫彩边框)
 │       │   ├── dashboard/
@@ -111,7 +109,7 @@ tlias-system/
 │       │   ├── job/JobManagement.vue          # 就业管理
 │       │   ├── feedback/FeedbackManagement.vue # 反馈管理
 │       │   └── log/OperationLog.vue           # 操作日志
-│       ├── api/                               # API 请求模块 (9个)
+│       ├── api/                               # API 请求模块 (6个)
 │       ├── router/index.js                    # 路由配置
 │       └── utils/request.js                   # Axios 封装 (支持blob)
 │
@@ -119,19 +117,12 @@ tlias-system/
 │   ├── Dockerfile.backend              # 后端 Docker 镜像
 │   ├── Dockerfile.frontend             # 前端 Docker 镜像
 │   ├── nginx.conf                      # Nginx 配置
-│   └── docker-compose.yml              # Docker Compose 编排 (含日志表)
+│   └── docker-compose.yml              # Docker Compose 编排
 │
 ├── docs/                               # 文档
-│   ├── init.sql                        # 数据库初始化脚本
-│   ├── operation_log.sql               # 操作日志表脚本
-│   ├── migration.sql                   # 数据库迁移脚本 (v1.4.0)
-│   ├── test-data.sql                   # 丰富测试数据脚本 (每表15条)
-│   ├── fix-foreign-keys.sql            # 外键关联修复脚本
+│   ├── tlias-full.sql                  # 数据库完整脚本 (建表+测试数据)
 │   ├── 数据库设计文档.md                # 数据库 ER 图 + 表结构详细设计
 │   └── 接口设计文档.md                  # RESTful API 接口详细文档 (48个接口)
-│
-├── .mvn-dist/                          # Maven 3.9.6 本地分发版
-│   └── apache-maven-3.9.6/
 │
 └── README.md                           # 项目说明文档
 ```
@@ -215,8 +206,7 @@ net start MySQL80
 # 2. 创建数据库并导入数据
 cd tlias-system
 mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS tlias DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
-Get-Content "docs\init.sql" | mysql -u root -p -D tlias
-Get-Content "docs\operation_log.sql" | mysql -u root -p -D tlias
+Get-Content "docs\tlias-full.sql" | mysql -u root -p -D tlias
 ```
 
 #### Linux / macOS
@@ -228,8 +218,7 @@ sudo systemctl start mysql
 # 2. 创建数据库并导入数据
 cd tlias-system
 mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS tlias DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
-mysql -u root -p -D tlias < docs/init.sql
-mysql -u root -p -D tlias < docs/operation_log.sql
+mysql -u root -p -D tlias < docs/tlias-full.sql
 ```
 
 > 导入时会提示输入 MySQL root 密码，请根据实际情况修改命令中的密码参数。
@@ -457,8 +446,7 @@ npm run preview
 # Windows PowerShell - 初始化数据库
 cd tlias-system
 mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS tlias DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
-Get-Content "docs\init.sql" | mysql -u root -p -D tlias
-Get-Content "docs\operation_log.sql" | mysql -u root -p -D tlias
+Get-Content "docs\tlias-full.sql" | mysql -u root -p -D tlias
 
 # 查询数据
 mysql -u root -p -D tlias -e "SELECT * FROM emp;"
@@ -466,8 +454,7 @@ mysql -u root -p -D tlias -e "SELECT * FROM emp;"
 # 重置数据库 (危险操作，会删除所有数据)
 mysql -u root -p -e "DROP DATABASE IF EXISTS tlias;"
 mysql -u root -p -e "CREATE DATABASE tlias DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;"
-Get-Content "docs\init.sql" | mysql -u root -p -D tlias
-Get-Content "docs\operation_log.sql" | mysql -u root -p -D tlias
+Get-Content "docs\tlias-full.sql" | mysql -u root -p -D tlias
 ```
 
 ## 开发规范
@@ -511,6 +498,54 @@ Get-Content "docs\operation_log.sql" | mysql -u root -p -D tlias
 | 敏感配置 | 环境变量注入 (DB密码、JWT密钥) |
 
 ## 更新日志
+
+### v1.8.0 (2026-06-26)
+**UI 全面美化 + 代码清理 + 文档修复：**
+
+**Header 玻璃效果：**
+- 透明毛玻璃背景：`background: transparent` + `backdrop-filter: blur(16px)`
+- 环绕炫彩流光边框：`conic-gradient` 蓝→青→绿 + `mask` 镂空 + `hue-rotate` 旋转动画
+- 底部渐变背景层：蓝→靛蓝柔和渐变 + `bgFlow` 缓慢流动动画
+
+**侧边栏增强：**
+- 5 色极光光晕：蓝/青/绿/紫/粉，独立漂移动画（14-18s）
+- 右侧边缘发光线：蓝→青→绿垂直渐变 + 呼吸动画
+- 背景微动画层：渐变色缓慢上下移动
+- 菜单项 hover/active：蓝色渐变背景 + 左侧发光条 + box-shadow
+
+**统计卡片图标：**
+- 彩色渐变背景（蓝/绿/橙/粉）+ 白色图标
+- 发光阴影效果 + 呼吸光效动画
+- 卡片内容居中显示
+
+**原型对齐：**
+- 页面标题：蓝色左侧竖线装饰
+- 搜索栏：添加文字标签（姓名/性别/入职时间等）
+- 查询按钮：橙黄色 `#e6a23c`（对齐原型）
+- 表格表头：浅蓝色背景 `#e8f4fd`
+- 分页页码：当前页蓝色圆形背景
+
+**布局紧凑化：**
+- 侧边栏宽度：220px → 190px
+- 内容区 padding：16px 20px → 12px 16px
+- 页面标题字号：18px → 15px
+- 表格字号：14px → 13px
+- 表格行高：padding 6px → 4px
+
+**代码清理（删除冗余代码）：**
+- 删除 3 个未使用 API 文件（exam.js/job.js/feedback.js）
+- 删除 2 个未使用 Java 文件（EmpDTO.java/PasswordGenerator.java）
+- 移除 2 个未使用依赖（pinia/sass）
+- 清理 9 个 Mapper 冗余 @Mapper 注解（保留 @MapperScan）
+- 清理 global.css 约 170 行重复/未使用样式
+- 移除 JwtInterceptor 冗余 /login 检查
+- 清理 application.yml 无效 mapper-locations 配置
+
+**文档修复：**
+- 修复 docker-compose.yml SQL 文件引用（init.sql → tlias-full.sql）
+- 修复 README 数据库命令引用
+- 修复 .gitignore（移除 docs/ 排除，新增 .mvn-dist/ 排除）
+- 更新前端技术栈（移除 Pinia）
 
 ### v1.7.0 (2026-06-26)
 **UI 全面重构 + 质感提升：**

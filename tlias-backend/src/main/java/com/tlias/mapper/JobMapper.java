@@ -5,10 +5,8 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 /**
- * 就业记录数据访问层接口，对应数据库 job 表
- * 提供就业信息的增删改查及统计操作
+ * 就业记录数据访问层接口，对应数据�?job �? * 提供就业信息的增删改查及统计操作
  */
-@Mapper
 public interface JobMapper {
 
     /**
@@ -21,8 +19,7 @@ public interface JobMapper {
     List<Job> selectAll();
 
     /**
-     * 根据ID查询就业记录详情，关联查询学生姓名
-     * @param id 就业记录ID
+     * 根据ID查询就业记录详情，关联查询学生姓�?     * @param id 就业记录ID
      * @return 就业记录实体对象
      */
     @Select("SELECT j.*, s.name as studentName FROM job j " +
@@ -40,9 +37,7 @@ public interface JobMapper {
     void insert(Job job);
 
     /**
-     * 根据ID更新就业记录全部信息，同时更新修改时间
-     * @param job 就业记录实体对象（需包含id）
-     */
+     * 根据ID更新就业记录全部信息，同时更新修改时�?     * @param job 就业记录实体对象（需包含id�?     */
     @Update("UPDATE job SET student_id = #{studentId}, company = #{company}, position = #{position}, " +
             "salary = #{salary}, job_date = #{jobDate}, city = #{city}, update_time = NOW() " +
             "WHERE id = #{id}")

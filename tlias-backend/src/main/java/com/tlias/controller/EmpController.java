@@ -1,6 +1,5 @@
 package com.tlias.controller;
 
-import com.tlias.exception.BusinessException;
 import com.tlias.pojo.PageResult;
 import com.tlias.pojo.Result;
 import com.tlias.pojo.entity.Emp;

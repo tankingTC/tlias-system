@@ -5,17 +5,12 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 /**
- * 反馈意见数据访问层接口，对应数据库 feedback 表
- * 提供反馈信息的增删改查及条件筛选操作
- */
-@Mapper
+ * 反馈意见数据访问层接口，对应数据�?feedback �? * 提供反馈信息的增删改查及条件筛选操�? */
 public interface FeedbackMapper {
 
     /**
-     * 多条件动态查询反馈列表，支持按类型和状态筛选
-     * @param type   反馈类型
-     * @param status 处理状态
-     * @return 反馈列表
+     * 多条件动态查询反馈列表，支持按类型和状态筛�?     * @param type   反馈类型
+     * @param status 处理状�?     * @return 反馈列表
      */
     @Select("<script>" +
             "SELECT * FROM feedback WHERE 1=1 " +
@@ -43,9 +38,7 @@ public interface FeedbackMapper {
     void insert(Feedback feedback);
 
     /**
-     * 根据ID更新反馈全部信息，同时更新修改时间
-     * @param feedback 反馈实体对象（需包含id）
-     */
+     * 根据ID更新反馈全部信息，同时更新修改时�?     * @param feedback 反馈实体对象（需包含id�?     */
     @Update("UPDATE feedback SET type = #{type}, title = #{title}, content = #{content}, " +
             "contact = #{contact}, phone = #{phone}, status = #{status}, update_time = NOW() " +
             "WHERE id = #{id}")

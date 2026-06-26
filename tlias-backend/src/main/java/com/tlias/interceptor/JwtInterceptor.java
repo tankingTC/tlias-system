@@ -29,13 +29,7 @@ public class JwtInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        // 2. 放行登录接口（登录时还没有 Token）
-        String uri = request.getRequestURI();
-        if (uri.equals("/login")) {
-            return true;
-        }
-
-        // 3. 获取请求头中的 Token
+        // 2. 获取请求头中的 Token
         String token = request.getHeader("token");
         if (token == null || token.isEmpty()) {
             response.setStatus(401); // 未携带 Token

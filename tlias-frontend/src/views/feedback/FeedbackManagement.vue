@@ -19,14 +19,16 @@
     <el-card class="content-card" shadow="hover">
       <!-- 搜索栏：按反馈类型和处理状态筛选 -->
       <div class="search-bar">
-        <el-select v-model="search.type" placeholder="反馈类型" clearable>
+        <span class="search-label">类型</span>
+        <el-select v-model="search.type" placeholder="反馈类型" clearable style="width: 140px">
           <el-option label="学员反馈" :value="0" /><el-option label="员工反馈" :value="1" />
         </el-select>
-        <el-select v-model="search.status" placeholder="处理状态" clearable>
+        <span class="search-label">状态</span>
+        <el-select v-model="search.status" placeholder="处理状态" clearable style="width: 140px">
           <el-option label="未处理" :value="0" /><el-option label="处理中" :value="1" /><el-option label="已处理" :value="2" />
         </el-select>
-        <el-button type="primary" @click="loadData"><el-icon><Search /></el-icon>搜索</el-button>
-        <el-button @click="resetSearch"><el-icon><Refresh /></el-icon>重置</el-button>
+        <el-button type="primary" @click="loadData">查询</el-button>
+        <el-button @click="resetSearch">清空</el-button>
       </div>
 
       <!-- 批量操作栏 -->
@@ -67,8 +69,8 @@
         <el-table-column label="操作" width="150" fixed="right">
           <template #default="{ row }">
             <div class="table-actions">
-              <el-button size="small" type="primary" link @click="openDialog(row)"><el-icon><Edit /></el-icon>编辑</el-button>
-              <el-button size="small" type="danger" link @click="handleDelete(row.id)"><el-icon><Delete /></el-icon>删除</el-button>
+              <el-button size="small" type="primary" link @click="openDialog(row)">编辑</el-button>
+              <el-button size="small" type="danger" link @click="handleDelete(row.id)">删除</el-button>
             </div>
           </template>
         </el-table-column>

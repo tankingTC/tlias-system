@@ -262,4 +262,60 @@ onUnmounted(() => {
   align-items: center;
   font-weight: 500;
 }
+
+/* 统计卡片图标 */
+.stat-card {
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: center;
+}
+.stat-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.07);
+}
+.stat-card:hover .stat-icon {
+  transform: scale(1.15);
+}
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 22px;
+  margin: 0 auto 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: iconPulse 3s ease-in-out infinite;
+}
+.stat-icon.blue {
+  background: linear-gradient(135deg, #6b8cff, #4a6cf7);
+  box-shadow: 0 4px 14px rgba(107, 140, 255, 0.35);
+}
+.stat-icon.green {
+  background: linear-gradient(135deg, #5ec487, #3ba55d);
+  box-shadow: 0 4px 14px rgba(94, 196, 135, 0.35);
+}
+.stat-icon.orange {
+  background: linear-gradient(135deg, #f0a76a, #e08b3a);
+  box-shadow: 0 4px 14px rgba(240, 167, 106, 0.35);
+}
+.stat-icon.pink {
+  background: linear-gradient(135deg, #e88bc4, #d46ba3);
+  box-shadow: 0 4px 14px rgba(232, 139, 196, 0.35);
+}
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 8px 0 4px;
+}
+.stat-label {
+  font-size: 13px;
+  color: #94a3b8;
+}
+@keyframes iconPulse {
+  0%, 100% { filter: brightness(1); }
+  50%      { filter: brightness(1.08); }
+}
 </style>

@@ -5,7 +5,6 @@ import org.apache.ibatis.annotations.*;
 import java.time.LocalDate;
 import java.util.List;
 
-@Mapper
 public interface EmpMapper {
 
     @Select("<script>" +

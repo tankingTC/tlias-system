@@ -5,10 +5,7 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 /**
- * 考试数据访问层接口，对应数据库 exam 表
- * 提供考试信息的增删改查操作
- */
-@Mapper
+ * 考试数据访问层接口，对应数据�?exam �? * 提供考试信息的增删改查操�? */
 public interface ExamMapper {
 
     /**
@@ -21,8 +18,7 @@ public interface ExamMapper {
     List<Exam> selectAll();
 
     /**
-     * 根据ID查询考试详情，关联查询班级名称
-     * @param id 考试ID
+     * 根据ID查询考试详情，关联查询班级名�?     * @param id 考试ID
      * @return 考试实体对象
      */
     @Select("SELECT e.*, c.name as className FROM exam e " +
@@ -40,9 +36,7 @@ public interface ExamMapper {
     void insert(Exam exam);
 
     /**
-     * 根据ID更新考试全部信息，同时更新修改时间
-     * @param exam 考试实体对象（需包含id）
-     */
+     * 根据ID更新考试全部信息，同时更新修改时�?     * @param exam 考试实体对象（需包含id�?     */
     @Update("UPDATE exam SET title = #{title}, class_id = #{classId}, start_time = #{startTime}, " +
             "end_time = #{endTime}, total_score = #{totalScore}, status = #{status}, update_time = NOW() " +
             "WHERE id = #{id}")

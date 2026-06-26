@@ -1,9 +1,8 @@
 /**
  * 应用入口文件
- * 负责创建Vue应用实例并注册全局插件（Pinia状态管理、Element Plus UI库、路由等）
+ * 负责创建Vue应用实例并注册全局插件（Element Plus UI库、路由等）
  */
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import './styles/global.css'
@@ -14,17 +13,15 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import App from './App.vue'
 import router from './router'
 
-// 创建Vue应用实例和Pinia状态管理实例
+// 创建Vue应用实例
 const app = createApp(App)
-const pinia = createPinia()
 
 // 全局注册所有Element Plus图标组件，可在模板中直接使用
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
 
-// 按顺序注册插件：状态管理 -> 路由 -> UI框架（配置中文语言）
-app.use(pinia)
+// 按顺序注册插件：路由 -> UI框架（配置中文语言）
 app.use(router)
 app.use(ElementPlus, { locale: zhCn })
 // 挂载应用到#app根节点

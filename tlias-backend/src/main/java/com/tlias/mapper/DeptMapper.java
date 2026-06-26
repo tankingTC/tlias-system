@@ -5,10 +5,8 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 /**
- * 部门数据访问层接口，对应数据库 dept 表
- * 提供部门的增删改查及统计操作
+ * 部门数据访问层接口，对应数据�?dept �? * 提供部门的增删改查及统计操作
  */
-@Mapper
 public interface DeptMapper {
 
     /**
@@ -27,9 +25,7 @@ public interface DeptMapper {
     void insert(Dept dept);
 
     /**
-     * 根据ID更新部门名称，同时更新修改时间
-     * @param dept 部门实体对象（需包含id和name）
-     */
+     * 根据ID更新部门名称，同时更新修改时�?     * @param dept 部门实体对象（需包含id和name�?     */
     @Update("UPDATE dept SET name = #{name}, update_time = NOW() WHERE id = #{id}")
     void update(Dept dept);
 

@@ -15,181 +15,25 @@ html, body, #app {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 .page-header-left h2 {
   margin: 0 0 4px;
-  font-size: 20px;
+  font-size: 15px;
   font-weight: 600;
-  color: #1e293b;
+  color: #303133;
   letter-spacing: 0.5px;
+  padding-left: 12px;
+  border-left: 3px solid #409eff;
 }
 .page-header-left p {
   margin: 0;
-  color: #94a3b8;
-  font-size: 13px;
+  color: #909399;
+  font-size: 12px;
 }
 .page-header-actions {
   display: flex;
   gap: 8px;
-}
-
-/* ===== 统计卡片 ===== */
-.stat-card {
-  text-align: center;
-  padding: 24px 0 18px;
-  border-radius: 14px;
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  background: #fff;
-}
-.stat-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-}
-.stat-icon {
-  width: 54px;
-  height: 54px;
-  border-radius: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26px;
-  color: #fff;
-  margin-bottom: 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: transform 0.3s;
-}
-.stat-card:hover .stat-icon {
-  transform: scale(1.08);
-}
-.stat-icon.blue { background: linear-gradient(135deg, #6b8cff, #4a6cf7); }
-.stat-icon.green { background: linear-gradient(135deg, #5ec487, #3ba55d); }
-.stat-icon.orange { background: linear-gradient(135deg, #f0a76a, #e08b3a); }
-.stat-icon.pink { background: linear-gradient(135deg, #e88bc4, #d46ba3); }
-.stat-icon.cyan { background: linear-gradient(135deg, #5ec4c4, #3a9e9e); }
-.stat-icon.red { background: linear-gradient(135deg, #e87474, #c75050); }
-
-.stat-value {
-  font-size: 32px;
-  font-weight: 700;
-  color: #1e293b;
-  margin: 0 0 6px;
-  line-height: 1.2;
-  font-variant-numeric: tabular-nums;
-}
-.stat-label {
-  font-size: 13px;
-  color: #94a3b8;
-  font-weight: 500;
-}
-.stat-trend {
-  font-size: 12px;
-  margin-top: 6px;
-}
-.stat-trend.up { color: #5ec487; }
-.stat-trend.down { color: #e87474; }
-
-/* ===== 快捷操作区 ===== */
-.shortcut-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-.shortcut-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  background: rgba(255, 255, 255, 0.6);
-}
-.shortcut-item:hover {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(91, 141, 239, 0.3);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
-}
-.shortcut-item .el-icon {
-  font-size: 20px;
-}
-
-/* ===== 活动动态列表 ===== */
-.activity-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.activity-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 11px 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-  font-size: 13px;
-  color: #475569;
-  transition: background 0.2s;
-}
-.activity-item:hover {
-  background: rgba(0, 0, 0, 0.02);
-}
-.activity-item:last-child {
-  border-bottom: none;
-}
-.activity-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.activity-dot.green { background: #5ec487; box-shadow: 0 0 6px rgba(94, 196, 135, 0.4); }
-.activity-dot.orange { background: #f0a76a; box-shadow: 0 0 6px rgba(240, 167, 106, 0.4); }
-.activity-dot.red { background: #e87474; box-shadow: 0 0 6px rgba(232, 116, 116, 0.4); }
-.activity-dot.blue { background: #6b8cff; box-shadow: 0 0 6px rgba(107, 140, 255, 0.4); }
-
-.activity-content {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-.activity-user {
-  font-weight: 500;
-  color: #1e293b;
-}
-.activity-action {
-  color: #94a3b8;
-}
-.activity-url {
-  color: #94a3b8;
-  font-size: 12px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 140px;
-}
-.activity-time {
-  color: #94a3b8;
-  font-size: 12px;
-  white-space: nowrap;
-  margin-left: auto;
-}
-
-/* ===== 空状态 ===== */
-.empty-state {
-  text-align: center;
-  padding: 48px 0;
-  color: #94a3b8;
-}
-.empty-state .el-icon {
-  font-size: 44px;
-  margin-bottom: 10px;
-  opacity: 0.5;
 }
 
 /* ===== 表格操作按钮组 ===== */
@@ -205,7 +49,7 @@ html, body, #app {
   gap: 10px;
   flex-wrap: wrap;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 .search-bar .el-input,
 .search-bar .el-select {
@@ -217,44 +61,23 @@ html, body, #app {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 16px;
+  padding: 8px 14px;
   background: linear-gradient(135deg, rgba(107, 140, 255, 0.08), rgba(99, 102, 241, 0.08));
   border: 1px solid rgba(107, 140, 255, 0.15);
-  border-radius: 10px;
-  margin-bottom: 12px;
-  font-size: 13px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-size: 12px;
   color: #6b8cff;
 }
 
 /* ===== 卡片通用 ===== */
 .content-card {
-  border-radius: 14px;
+  border-radius: 10px;
   border: 1px solid rgba(0, 0, 0, 0.04);
 }
 .content-card .el-card__header {
-  padding: 16px 20px;
+  padding: 14px 18px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-  font-weight: 500;
-}
-
-/* ===== 侧边栏菜单样式 ===== */
-.sidebar-menu {
-  border-right: none !important;
-}
-.sidebar-menu .el-menu-item {
-  height: 42px;
-  line-height: 42px;
-  margin: 2px 8px;
-  border-radius: 10px;
-  font-size: 14px;
-  transition: all 0.2s;
-}
-.sidebar-menu .el-menu-item:hover {
-  background: rgba(107, 140, 255, 0.08);
-}
-.sidebar-menu .el-menu-item.is-active {
-  background: rgba(107, 140, 255, 0.12);
-  color: #6b8cff;
   font-weight: 500;
 }
 
@@ -270,4 +93,41 @@ html, body, #app {
 .fade-transform-leave-to {
   opacity: 0;
   transform: translateY(-12px);
+}
+
+/* ===== 表格样式（对齐原型设计） ===== */
+.el-table th.el-table__cell {
+  background-color: #e8f4fd !important;
+  color: #303133 !important;
+  font-weight: 600;
+  font-size: 13px;
+}
+.el-table td.el-table__cell {
+  padding: 4px 0;
+  font-size: 13px;
+  color: #606266;
+}
+
+/* ===== 搜索栏标签 ===== */
+.search-bar .search-label {
+  font-size: 13px;
+  color: #606266;
+  white-space: nowrap;
+}
+
+/* ===== 查询按钮橙黄色（对齐原型） ===== */
+.search-bar .el-button--primary {
+  background-color: #e6a23c;
+  border-color: #e6a23c;
+}
+.search-bar .el-button--primary:hover {
+  background-color: #ebb563;
+  border-color: #ebb563;
+}
+
+/* ===== 分页当前页码蓝色圆形 ===== */
+.el-pagination .el-pager li.is-active {
+  background-color: #409eff !important;
+  color: #fff !important;
+  border-radius: 50%;
 }

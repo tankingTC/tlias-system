@@ -5,15 +5,12 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 /**
- * 学生数据访问层接口，对应数据库 student 表
- * 提供学生的增删改查、条件查询、批量导入、违规记录更新及统计操作
+ * 学生数据访问层接口，对应数据�?student �? * 提供学生的增删改查、条件查询、批量导入、违规记录更新及统计操作
  */
-@Mapper
 public interface StudentMapper {
 
     /**
-     * 多条件动态查询学生列表，支持按姓名模糊搜索、按班级和学历精确筛选
-     * 关联查询班级名称
+     * 多条件动态查询学生列表，支持按姓名模糊搜索、按班级和学历精确筛�?     * 关联查询班级名称
      * @param name      学生姓名（模糊匹配）
      * @param classId   班级ID
      * @param education 学历层次
@@ -39,8 +36,7 @@ public interface StudentMapper {
                                      @Param("education") String education);
 
     /**
-     * 根据ID查询学生详情，关联查询班级名称
-     * @param id 学生ID
+     * 根据ID查询学生详情，关联查询班级名�?     * @param id 学生ID
      * @return 学生实体对象
      */
     @Select("SELECT s.*, c.name as className FROM student s " +
@@ -60,9 +56,7 @@ public interface StudentMapper {
     void insert(Student student);
 
     /**
-     * 根据ID更新学生全部信息，同时更新修改时间
-     * @param student 学生实体对象（需包含id）
-     */
+     * 根据ID更新学生全部信息，同时更新修改时�?     * @param student 学生实体对象（需包含id�?     */
     @Update("UPDATE student SET student_no = #{studentNo}, name = #{name}, gender = #{gender}, phone = #{phone}, id_card = #{idCard}, " +
             "is_college = #{isCollege}, address = #{address}, class_id = #{classId}, education = #{education}, school = #{school}, major = #{major}, " +
             "enroll_date = #{enrollDate}, study_status = #{studyStatus}, violation_count = #{violationCount}, " +
@@ -78,39 +72,20 @@ public interface StudentMapper {
     void deleteById(Integer id);
 
     /**
-     * 查询所有学生记录
-     * @return 学生列表
+     * 查询所有学生记�?     * @return 学生列表
      */
     @Select("SELECT * FROM student")
     List<Student> selectAll();
 
     /**
-     * 根据学号查询学生
-     * @param studentNo 学号
-     * @return 学生实体对象，不存在则返回null
-     */
-    @Select("SELECT * FROM student WHERE student_no = #{studentNo}")
-    Student selectByStudentNo(String studentNo);
-
-    /**
-     * 根据手机号查询学生
-     * @param phone 手机号
-     * @return 学生实体对象，不存在则返回null
-     */
-    @Select("SELECT * FROM student WHERE phone = #{phone}")
-    Student selectByPhone(String phone);
-
-    /**
-     * 为学生增加违规记录：违规次数+1，违规扣分累加指定分数
-     * @param id    学生ID
-     * @param score 本次违规扣分值
-     */
+     * 为学生增加违规记录：违规次数+1，违规扣分累加指定分�?     * @param id    学生ID
+     * @param score 本次违规扣分�?     */
     @Update("UPDATE student SET violation_count = violation_count + 1, " +
             "violation_score = violation_score + #{score}, update_time = NOW() WHERE id = #{id}")
     void addViolation(@Param("id") Integer id, @Param("score") Integer score);
 
     /**
-     * 批量导入学生数据，使用 foreach 拼接多条 INSERT VALUES
+     * 批量导入学生数据，使�?foreach 拼接多条 INSERT VALUES
      * @param students 学生列表
      */
     @Insert("<script>" +
@@ -131,9 +106,7 @@ public interface StudentMapper {
     int count();
 
     /**
-     * 统计已就业学生人数（job_status=1）
-     * @return 已就业学生数量
-     */
+     * 统计已就业学生人数（job_status=1�?     * @return 已就业学生数�?     */
     @Select("SELECT COUNT(*) FROM student WHERE job_status = 1")
     int countEmployed();
 }

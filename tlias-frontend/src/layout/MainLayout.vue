@@ -2,7 +2,6 @@
   <el-container class="main-layout">
     <!-- 顶部导航：渐变流光 + 毛玻璃 -->
     <el-header class="header">
-      <div class="header-glow"></div>
       <div class="header-left">
         <el-icon class="collapse-btn" @click="isCollapsed = !isCollapsed">
           <Fold v-if="!isCollapsed" />
@@ -50,10 +49,12 @@
 
     <el-container>
       <!-- 侧边栏：极光玻璃效果 -->
-      <el-aside :width="isCollapsed ? '64px' : '220px'" class="aside">
+      <el-aside :width="isCollapsed ? '64px' : '190px'" class="aside">
         <div class="aurora aurora-1"></div>
         <div class="aurora aurora-2"></div>
         <div class="aurora aurora-3"></div>
+        <div class="aurora aurora-4"></div>
+        <div class="aurora aurora-5"></div>
         
         <el-scrollbar class="glass-layer">
           <el-menu
@@ -161,64 +162,61 @@ const handleCommand = (command) => {
 .main-layout {
   height: 100vh;
   overflow: hidden;
+  position: relative;
+  background: linear-gradient(135deg, #e8f0fe, #dbeafe, #eff6ff, #e0e7ff);
+  background-size: 400% 400%;
+  animation: bgFlow 20s ease infinite;
+}
+@keyframes bgFlow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-/* ==================== 顶部导航：玻璃效果（对齐登录页风格） ==================== */
+/* ==================== 顶部导航：透明玻璃 + 环绕流光 ==================== */
 .header {
   position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  background: transparent;
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
   border: none;
   padding: 0 24px;
   height: 56px;
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.08),
-    0 0 0 1px rgba(255, 255, 255, 0.3) inset,
-    0 1px 0 rgba(255, 255, 255, 0.4) inset;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
   flex-shrink: 0;
   z-index: 10;
 }
 
-/* 渐变发光边框（与登录页一致） */
-.header::after {
+/* 环绕炫彩流光边框：conic-gradient + mask + hue-rotate */
+.header::before {
   content: '';
   position: absolute;
   inset: 0;
-  padding: 1px;
-  border-radius: 0;
+  padding: 2px;
   background: conic-gradient(
     from 0deg,
-    rgba(255,255,255,0.7),
-    rgba(160,200,255,0.6),
-    rgba(255,255,255,0.4),
-    rgba(180,220,255,0.6),
-    rgba(255,255,255,0.7)
+    #3b82f6,
+    #06b6d4,
+    #10b981,
+    #3b82f6
   );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   mask-composite: exclude;
   pointer-events: none;
-  animation: rotateBorder 6s linear infinite;
+  animation: borderGlow 3s linear infinite;
 }
-
-/* 顶部渐变流光条：蓝→青→绿→蓝 */
-.header-glow {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #3b82f6, #06b6d4, #10b981, #3b82f6);
-  background-size: 200% 200%;
-  animation: gradientShift 4s ease infinite;
-}
-@keyframes gradientShift {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+@keyframes borderGlow {
+  from { filter: hue-rotate(0deg); }
+  to   { filter: hue-rotate(360deg); }
 }
 
 .header-left {
@@ -297,10 +295,10 @@ const handleCommand = (command) => {
   font-weight: 500;
 }
 
-/* ==================== 侧边栏：极光玻璃 ==================== */
+/* ==================== 侧边栏：极光玻璃（增强版） ==================== */
 .aside {
   position: relative;
-  background: rgba(15, 23, 42, 0.88) !important;
+  background: rgba(15, 23, 42, 0.92) !important;
   backdrop-filter: blur(16px) saturate(150%);
   -webkit-backdrop-filter: blur(16px) saturate(150%);
   border-right: none;
@@ -308,46 +306,111 @@ const handleCommand = (command) => {
   overflow: hidden;
 }
 
-/* 极光光晕：蓝+青+绿 */
+/* 背景微动画层：渐变色缓慢上下移动 */
+.aside::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+    rgba(59, 130, 246, 0.1),
+    rgba(6, 182, 212, 0.06),
+    rgba(139, 92, 246, 0.1),
+    rgba(236, 72, 153, 0.06)
+  );
+  background-size: 100% 200%;
+  animation: sidebarBg 8s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+@keyframes sidebarBg {
+  0%   { background-position: 0% 0%; }
+  100% { background-position: 0% 100%; }
+}
+
+/* 右侧边缘发光线：蓝→青→绿垂直渐变 */
+.aside::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; right: 0;
+  width: 2px;
+  background: linear-gradient(180deg,
+    transparent,
+    rgba(59, 130, 246, 0.6),
+    rgba(6, 182, 212, 0.5),
+    rgba(16, 185, 129, 0.5),
+    transparent
+  );
+  animation: sideGlow 4s ease-in-out infinite;
+  z-index: 2;
+  pointer-events: none;
+}
+@keyframes sideGlow {
+  0%, 100% { opacity: 0.6; }
+  50%      { opacity: 1; }
+}
+
+/* 极光光晕：5色增强版 */
 .aurora {
   position: absolute;
   border-radius: 50%;
-  filter: blur(60px);
+  filter: blur(50px);
   pointer-events: none;
   will-change: transform;
 }
 .aurora-1 {
-  width: 200px; height: 200px;
-  background: rgba(59, 130, 246, 0.25);
-  top: -40px; left: -40px;
-  animation: drift1 20s ease-in-out infinite alternate;
+  width: 240px; height: 240px;
+  background: rgba(59, 130, 246, 0.35);
+  top: -50px; left: -50px;
+  animation: drift1 14s ease-in-out infinite alternate;
 }
 .aurora-2 {
-  width: 180px; height: 180px;
-  background: rgba(6, 182, 212, 0.20);
-  top: 45%; left: 25%;
-  animation: drift2 25s ease-in-out infinite alternate;
+  width: 200px; height: 200px;
+  background: rgba(6, 182, 212, 0.3);
+  top: 40%; left: 20%;
+  animation: drift2 16s ease-in-out infinite alternate;
 }
 .aurora-3 {
-  width: 160px; height: 160px;
-  background: rgba(16, 185, 129, 0.18);
+  width: 220px; height: 220px;
+  background: rgba(16, 185, 129, 0.25);
   bottom: -30px; right: -20px;
-  animation: drift3 22s ease-in-out infinite alternate;
+  animation: drift3 14s ease-in-out infinite alternate;
+}
+.aurora-4 {
+  width: 180px; height: 180px;
+  background: rgba(139, 92, 246, 0.28);
+  top: 20%; right: -30px;
+  animation: drift4 18s ease-in-out infinite alternate;
+}
+.aurora-5 {
+  width: 160px; height: 160px;
+  background: rgba(236, 72, 153, 0.22);
+  bottom: 20%; left: 10%;
+  animation: drift5 15s ease-in-out infinite alternate;
 }
 @keyframes drift1 {
   0%   { transform: translate(0, 0) scale(1); }
-  50%  { transform: translate(25px, -20px) scale(1.08); }
-  100% { transform: translate(-10px, 15px) scale(0.95); }
+  50%  { transform: translate(35px, -30px) scale(1.1); }
+  100% { transform: translate(-15px, 20px) scale(0.92); }
 }
 @keyframes drift2 {
   0%   { transform: translate(0, 0) scale(1); }
-  50%  { transform: translate(-20px, 25px) scale(1.06); }
-  100% { transform: translate(15px, -15px) scale(0.97); }
+  50%  { transform: translate(-30px, 35px) scale(1.08); }
+  100% { transform: translate(20px, -20px) scale(0.95); }
 }
 @keyframes drift3 {
   0%   { transform: translate(0, 0) scale(1); }
-  50%  { transform: translate(20px, -15px) scale(1.04); }
-  100% { transform: translate(-15px, 20px) scale(0.98); }
+  50%  { transform: translate(25px, -25px) scale(1.06); }
+  100% { transform: translate(-20px, 30px) scale(0.96); }
+}
+@keyframes drift4 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(-20px, -30px) scale(1.05); }
+  100% { transform: translate(25px, 15px) scale(0.94); }
+}
+@keyframes drift5 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(30px, 20px) scale(1.07); }
+  100% { transform: translate(-25px, -25px) scale(0.93); }
 }
 
 .glass-layer {
@@ -365,18 +428,19 @@ const handleCommand = (command) => {
 /* 菜单项样式 */
 .sidebar-menu :deep(.el-menu-item),
 .sidebar-menu :deep(.el-sub-menu__title) {
-  height: 42px;
-  line-height: 42px;
-  margin: 2px 8px;
-  border-radius: 10px;
-  color: rgba(255, 255, 255, 0.65) !important;
+  height: 38px;
+  line-height: 38px;
+  margin: 2px 6px;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.6) !important;
   background: transparent !important;
   position: relative;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
+  font-size: 13px;
 }
 .sidebar-menu :deep(.el-menu-item:hover),
 .sidebar-menu :deep(.el-sub-menu__title:hover) {
-  background: rgba(255, 255, 255, 0.08) !important;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.2), rgba(6, 182, 212, 0.1)) !important;
   color: #fff !important;
 }
 .sidebar-menu :deep(.el-menu-item:hover)::before {
@@ -384,12 +448,13 @@ const handleCommand = (command) => {
   position: absolute;
   left: 0; top: 50%;
   transform: translateY(-50%);
-  width: 3px; height: 20px;
+  width: 3px; height: 18px;
   border-radius: 0 3px 3px 0;
-  background: rgba(59, 130, 246, 0.5);
+  background: rgba(59, 130, 246, 0.6);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
 }
 .sidebar-menu :deep(.el-menu-item.is-active) {
-  background: rgba(255, 255, 255, 0.12) !important;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.25), rgba(6, 182, 212, 0.15)) !important;
   color: #fff !important;
   font-weight: 500;
 }
@@ -398,46 +463,48 @@ const handleCommand = (command) => {
   position: absolute;
   left: 0; top: 50%;
   transform: translateY(-50%);
-  width: 3px; height: 24px;
+  width: 3px; height: 22px;
   border-radius: 0 4px 4px 0;
-  background: linear-gradient(180deg, #3b82f6, #10b981);
-  box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+  background: linear-gradient(180deg, #3b82f6, #06b6d4);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
 }
 
 /* 子菜单 */
 .sidebar-menu :deep(.el-sub-menu .el-menu-item) {
   min-width: auto;
-  padding-left: 52px !important;
-  color: rgba(255, 255, 255, 0.55) !important;
+  padding-left: 44px !important;
+  color: rgba(255, 255, 255, 0.5) !important;
   background: transparent !important;
   position: relative;
+  font-size: 13px;
 }
 .sidebar-menu :deep(.el-sub-menu .el-menu-item:hover) {
   color: #fff !important;
-  background: rgba(255, 255, 255, 0.06) !important;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), rgba(6, 182, 212, 0.08)) !important;
 }
 .sidebar-menu :deep(.el-sub-menu .el-menu-item:hover)::before {
   content: '';
   position: absolute;
   left: 0; top: 50%;
   transform: translateY(-50%);
-  width: 3px; height: 20px;
+  width: 3px; height: 18px;
   border-radius: 0 3px 3px 0;
-  background: rgba(59, 130, 246, 0.4);
+  background: rgba(59, 130, 246, 0.5);
+  box-shadow: 0 0 6px rgba(59, 130, 246, 0.35);
 }
 .sidebar-menu :deep(.el-sub-menu .el-menu-item.is-active) {
   color: #fff !important;
-  background: rgba(255, 255, 255, 0.1) !important;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.2), rgba(6, 182, 212, 0.12)) !important;
 }
 .sidebar-menu :deep(.el-sub-menu .el-menu-item.is-active)::before {
   content: '';
   position: absolute;
   left: 0; top: 50%;
   transform: translateY(-50%);
-  width: 3px; height: 22px;
+  width: 3px; height: 20px;
   border-radius: 0 4px 4px 0;
-  background: linear-gradient(180deg, #3b82f6, #10b981);
-  box-shadow: 0 0 6px rgba(59, 130, 246, 0.35);
+  background: linear-gradient(180deg, #3b82f6, #06b6d4);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.45);
 }
 
 .sidebar-menu :deep(.el-sub-menu__icon-arrow) {
@@ -453,11 +520,11 @@ const handleCommand = (command) => {
 /* ==================== 内容区 ==================== */
 .main {
   background: #f1f5f9;
-  padding: 16px 20px;
+  padding: 12px 16px;
   height: calc(100vh - 56px);
   overflow-y: auto;
 }
 .breadcrumb {
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 </style>

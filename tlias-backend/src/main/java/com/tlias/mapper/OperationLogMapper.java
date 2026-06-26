@@ -5,10 +5,8 @@ import org.apache.ibatis.annotations.*;
 import java.util.List;
 
 /**
- * 操作日志数据访问层接口，对应数据库 operation_log 表
- * 提供操作日志的记录入库和条件查询功能
+ * 操作日志数据访问层接口，对应数据�?operation_log �? * 提供操作日志的记录入库和条件查询功能
  */
-@Mapper
 public interface OperationLogMapper {
 
     /**
@@ -22,8 +20,7 @@ public interface OperationLogMapper {
 
     /**
      * 按用户名模糊查询操作日志，按创建时间倒序排列
-     * @param username 操作用户名（模糊匹配）
-     * @return 操作日志列表
+     * @param username 操作用户名（模糊匹配�?     * @return 操作日志列表
      */
     @Select("<script>" +
             "SELECT * FROM operation_log WHERE 1=1 " +

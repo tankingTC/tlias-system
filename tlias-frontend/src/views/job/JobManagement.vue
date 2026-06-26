@@ -19,10 +19,12 @@
     <el-card class="content-card" shadow="hover">
       <!-- 搜索栏：按公司名称和城市筛选 -->
       <div class="search-bar">
-        <el-input v-model="search.company" placeholder="搜索公司名称" clearable prefix-icon="Search" @keyup.enter="loadData" />
-        <el-input v-model="search.city" placeholder="搜索城市" clearable @keyup.enter="loadData" />
-        <el-button type="primary" @click="loadData"><el-icon><Search /></el-icon>搜索</el-button>
-        <el-button @click="resetSearch"><el-icon><Refresh /></el-icon>重置</el-button>
+        <span class="search-label">公司</span>
+        <el-input v-model="search.company" placeholder="搜索公司名称" clearable style="width: 200px" @keyup.enter="loadData" />
+        <span class="search-label">城市</span>
+        <el-input v-model="search.city" placeholder="搜索城市" clearable style="width: 140px" @keyup.enter="loadData" />
+        <el-button type="primary" @click="loadData">查询</el-button>
+        <el-button @click="resetSearch">清空</el-button>
       </div>
 
       <!-- 批量操作栏 -->
@@ -54,8 +56,8 @@
         <el-table-column label="操作" width="150" fixed="right">
           <template #default="{ row }">
             <div class="table-actions">
-              <el-button size="small" type="primary" link @click="openDialog(row)"><el-icon><Edit /></el-icon>编辑</el-button>
-              <el-button size="small" type="danger" link @click="handleDelete(row.id)"><el-icon><Delete /></el-icon>删除</el-button>
+              <el-button size="small" type="primary" link @click="openDialog(row)">编辑</el-button>
+              <el-button size="small" type="danger" link @click="handleDelete(row.id)">删除</el-button>
             </div>
           </template>
         </el-table-column>

@@ -19,7 +19,9 @@
     <el-card class="content-card" shadow="hover">
       <!-- 搜索栏：按班级名称和结课时间范围筛选 -->
       <div class="search-bar">
+        <span class="search-label">班级名称</span>
         <el-input v-model="search.name" placeholder="请输入班级名称" clearable style="width: 200px" @keyup.enter="loadData" />
+        <span class="search-label">结课时间</span>
         <el-date-picker v-model="search.endBegin" type="date" placeholder="开始时间" value-format="YYYY-MM-DD" style="width: 150px" />
         <span style="color: #909399">至</span>
         <el-date-picker v-model="search.endEnd" type="date" placeholder="结束时间" value-format="YYYY-MM-DD" style="width: 150px" />

@@ -25,12 +25,15 @@
     <el-card class="content-card" shadow="hover">
       <!-- 搜索栏：按班级名称、学历、所属班级筛选 -->
       <div class="search-bar">
+        <span class="search-label">姓名</span>
         <el-input v-model="search.name" placeholder="请输入班级名称" clearable style="width: 180px" @keyup.enter="loadData" />
+        <span class="search-label">学历</span>
         <el-select v-model="search.education" placeholder="最高学历" clearable style="width: 140px">
           <el-option label="初中" value="初中" /><el-option label="高中" value="高中" />
           <el-option label="大专" value="大专" /><el-option label="本科" value="本科" />
           <el-option label="硕士" value="硕士" /><el-option label="博士" value="博士" />
         </el-select>
+        <span class="search-label">班级</span>
         <el-select v-model="search.classId" placeholder="所属班级" clearable style="width: 180px">
           <el-option v-for="c in classes" :key="c.id" :label="c.name" :value="c.id" />
         </el-select>

@@ -6,19 +6,14 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * 班级数据访问层接口，对应数据库 class 表
- * 提供班级的增删改查、条件查询及学生人数统计操作
+ * 班级数据访问层接口，对应数据�?class �? * 提供班级的增删改查、条件查询及学生人数统计操作
  */
-@Mapper
 public interface ClazzMapper {
 
     /**
-     * 多条件动态查询班级列表，支持按名称模糊搜索、按结课日期范围筛选
-     * 关联查询讲师姓名
+     * 多条件动态查询班级列表，支持按名称模糊搜索、按结课日期范围筛�?     * 关联查询讲师姓名
      * @param name     班级名称（模糊匹配）
-     * @param endBegin 结课日期起始值
-     * @param endEnd   结课日期截止值
-     * @return 班级列表
+     * @param endBegin 结课日期起始�?     * @param endEnd   结课日期截止�?     * @return 班级列表
      */
     @Select("<script>" +
             "SELECT c.*, e.name as teacherName FROM class c " +
@@ -40,8 +35,7 @@ public interface ClazzMapper {
                                    @Param("endEnd") LocalDate endEnd);
 
     /**
-     * 根据ID查询班级详情，关联查询讲师姓名
-     * @param id 班级ID
+     * 根据ID查询班级详情，关联查询讲师姓�?     * @param id 班级ID
      * @return 班级实体对象
      */
     @Select("SELECT c.*, e.name as teacherName FROM class c " +
@@ -59,9 +53,7 @@ public interface ClazzMapper {
     void insert(Clazz clazz);
 
     /**
-     * 根据ID更新班级全部信息，同时更新修改时间
-     * @param clazz 班级实体对象（需包含id）
-     */
+     * 根据ID更新班级全部信息，同时更新修改时�?     * @param clazz 班级实体对象（需包含id�?     */
     @Update("UPDATE class SET name = #{name}, classroom = #{classroom}, teacher_id = #{teacherId}, start_date = #{startDate}, " +
             "end_date = #{endDate}, status = #{status}, subject = #{subject}, update_time = NOW() WHERE id = #{id}")
     void update(Clazz clazz);
