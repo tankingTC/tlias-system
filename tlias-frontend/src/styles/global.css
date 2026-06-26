@@ -1,14 +1,16 @@
-/* ===== 智学云帆 - 全局系统样式 ===== */
+/* ===== 智学云帆 - 全局系统样式 v2.0 ===== */
+/* 设计理念：柔和冷色调 + 玻璃质感 + 微交互 */
 
-/* 全局布局控制 - 阻止页面整体滚动 */
+/* 全局布局控制 */
 html, body, #app {
   height: 100%;
   margin: 0;
   padding: 0;
   overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
-/* 页面标题区 */
+/* ===== 页面标题区 ===== */
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -19,11 +21,12 @@ html, body, #app {
   margin: 0 0 4px;
   font-size: 20px;
   font-weight: 600;
-  color: #303133;
+  color: #1e293b;
+  letter-spacing: 0.5px;
 }
 .page-header-left p {
   margin: 0;
-  color: #909399;
+  color: #94a3b8;
   font-size: 13px;
 }
 .page-header-actions {
@@ -31,53 +34,63 @@ html, body, #app {
   gap: 8px;
 }
 
-/* 统计卡片 */
+/* ===== 统计卡片 ===== */
 .stat-card {
   text-align: center;
-  padding: 20px 0 16px;
-  transition: transform 0.3s, box-shadow 0.3s;
+  padding: 24px 0 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #fff;
 }
 .stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
 }
 .stat-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 14px;
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 26px;
   color: #fff;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s;
 }
-.stat-icon.blue { background: linear-gradient(135deg, #409eff, #337ecc); }
-.stat-icon.green { background: linear-gradient(135deg, #67c23a, #529b2e); }
-.stat-icon.orange { background: linear-gradient(135deg, #e6a23c, #cf9236); }
-.stat-icon.pink { background: linear-gradient(135deg, #f093fb, #e84393); }
-.stat-icon.cyan { background: linear-gradient(135deg, #00bcd4, #0097a7); }
-.stat-icon.red { background: linear-gradient(135deg, #f56c6c, #d9480f); }
+.stat-card:hover .stat-icon {
+  transform: scale(1.08);
+}
+.stat-icon.blue { background: linear-gradient(135deg, #6b8cff, #4a6cf7); }
+.stat-icon.green { background: linear-gradient(135deg, #5ec487, #3ba55d); }
+.stat-icon.orange { background: linear-gradient(135deg, #f0a76a, #e08b3a); }
+.stat-icon.pink { background: linear-gradient(135deg, #e88bc4, #d46ba3); }
+.stat-icon.cyan { background: linear-gradient(135deg, #5ec4c4, #3a9e9e); }
+.stat-icon.red { background: linear-gradient(135deg, #e87474, #c75050); }
 
 .stat-value {
-  font-size: 30px;
+  font-size: 32px;
   font-weight: 700;
-  color: #303133;
-  margin: 0 0 4px;
+  color: #1e293b;
+  margin: 0 0 6px;
   line-height: 1.2;
+  font-variant-numeric: tabular-nums;
 }
 .stat-label {
   font-size: 13px;
-  color: #909399;
+  color: #94a3b8;
+  font-weight: 500;
 }
 .stat-trend {
   font-size: 12px;
   margin-top: 6px;
 }
-.stat-trend.up { color: #67c23a; }
-.stat-trend.down { color: #f56c6c; }
+.stat-trend.up { color: #5ec487; }
+.stat-trend.down { color: #e87474; }
 
-/* 快捷操作区 */
+/* ===== 快捷操作区 ===== */
 .shortcut-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -86,23 +99,25 @@ html, body, #app {
 .shortcut-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  border-radius: 8px;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.2s;
-  border: 1px solid #f0f0f0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.6);
 }
 .shortcut-item:hover {
-  background: #f5f7fa;
-  border-color: #409eff;
-  color: #409eff;
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(91, 141, 239, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 }
 .shortcut-item .el-icon {
   font-size: 20px;
 }
 
-/* 动态列表 */
+/* ===== 活动动态列表 ===== */
 .activity-list {
   list-style: none;
   padding: 0;
@@ -110,12 +125,16 @@ html, body, #app {
 }
 .activity-item {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 10px;
-  padding: 10px 0;
-  border-bottom: 1px solid #f5f5f5;
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
   font-size: 13px;
-  color: #606266;
+  color: #475569;
+  transition: background 0.2s;
+}
+.activity-item:hover {
+  background: rgba(0, 0, 0, 0.02);
 }
 .activity-item:last-child {
   border-bottom: none;
@@ -124,40 +143,63 @@ html, body, #app {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #409eff;
-  margin-top: 5px;
   flex-shrink: 0;
 }
-.activity-time {
-  color: #c0c4cc;
+.activity-dot.green { background: #5ec487; box-shadow: 0 0 6px rgba(94, 196, 135, 0.4); }
+.activity-dot.orange { background: #f0a76a; box-shadow: 0 0 6px rgba(240, 167, 106, 0.4); }
+.activity-dot.red { background: #e87474; box-shadow: 0 0 6px rgba(232, 116, 116, 0.4); }
+.activity-dot.blue { background: #6b8cff; box-shadow: 0 0 6px rgba(107, 140, 255, 0.4); }
+
+.activity-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.activity-user {
+  font-weight: 500;
+  color: #1e293b;
+}
+.activity-action {
+  color: #94a3b8;
+}
+.activity-url {
+  color: #94a3b8;
   font-size: 12px;
-  margin-left: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
+  max-width: 140px;
+}
+.activity-time {
+  color: #94a3b8;
+  font-size: 12px;
+  white-space: nowrap;
+  margin-left: auto;
 }
 
-/* 空状态增强 */
+/* ===== 空状态 ===== */
 .empty-state {
-  padding: 60px 0;
   text-align: center;
+  padding: 48px 0;
+  color: #94a3b8;
 }
 .empty-state .el-icon {
-  font-size: 48px;
-  color: #c0c4cc;
-  margin-bottom: 12px;
-}
-.empty-state p {
-  color: #909399;
-  margin: 0;
+  font-size: 44px;
+  margin-bottom: 10px;
+  opacity: 0.5;
 }
 
-/* 表格操作按钮组 */
+/* ===== 表格操作按钮组 ===== */
 .table-actions {
   display: flex;
   gap: 4px;
   justify-content: center;
 }
 
-/* 搜索栏 */
+/* ===== 搜索栏 ===== */
 .search-bar {
   display: flex;
   gap: 10px;
@@ -170,56 +212,62 @@ html, body, #app {
   width: 160px;
 }
 
-/* 批量操作栏 */
+/* ===== 批量操作栏 ===== */
 .batch-bar {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 8px 16px;
-  background: #ecf5ff;
-  border-radius: 4px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, rgba(107, 140, 255, 0.08), rgba(99, 102, 241, 0.08));
+  border: 1px solid rgba(107, 140, 255, 0.15);
+  border-radius: 10px;
   margin-bottom: 12px;
   font-size: 13px;
-  color: #409eff;
+  color: #6b8cff;
 }
 
-/* 卡片通用 */
+/* ===== 卡片通用 ===== */
 .content-card {
-  border-radius: 8px;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
 }
 .content-card .el-card__header {
   padding: 16px 20px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  font-weight: 500;
 }
 
-/* 侧边栏菜单样式增强 */
+/* ===== 侧边栏菜单样式 ===== */
 .sidebar-menu {
   border-right: none !important;
 }
 .sidebar-menu .el-menu-item {
-  height: 44px;
-  line-height: 44px;
+  height: 42px;
+  line-height: 42px;
   margin: 2px 8px;
-  border-radius: 8px;
+  border-radius: 10px;
+  font-size: 14px;
+  transition: all 0.2s;
 }
 .sidebar-menu .el-menu-item:hover {
-  background: #ecf5ff;
+  background: rgba(107, 140, 255, 0.08);
 }
 .sidebar-menu .el-menu-item.is-active {
-  background: #ecf5ff;
-  color: #409eff;
+  background: rgba(107, 140, 255, 0.12);
+  color: #6b8cff;
+  font-weight: 500;
 }
 
-/* 页面过渡动画 */
+/* ===== 页面过渡动画 ===== */
 .fade-transform-enter-active,
 .fade-transform-leave-active {
-  transition: all 0.3s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .fade-transform-enter-from {
   opacity: 0;
-  transform: translateX(-20px);
+  transform: translateY(12px);
 }
 .fade-transform-leave-to {
   opacity: 0;
-  transform: translateX(20px);
+  transform: translateY(-12px);
 }

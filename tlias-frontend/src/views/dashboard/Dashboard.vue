@@ -1,16 +1,31 @@
 <!--
   仪表盘/首页
-  功能：展示系统概览统计、ECharts图表、快捷操作入口、最近操作动态
-  布局：统计卡片 -> 图表区（柱状图+饼图） -> 快捷操作+最近动态
+  功能：展示欢迎横幅、系统概览统计、ECharts图表、快捷操作入口、最近操作动态
 -->
 <template>
   <div class="dashboard">
-    <!-- 统计卡片区域：显示部门、员工、班级、学员总数 -->
+    <!-- 欢迎横幅：玻璃拟态 + 旋转彩虹边框 + 实时时钟 -->
+    <div class="welcome-wrapper">
+      <div class="welcome-border"></div>
+      <div class="welcome-banner">
+        <span class="particle" v-for="n in 8" :key="n" :style="particleStyle(n)"></span>
+        <div class="welcome-left">
+          <div class="welcome-greeting">👋 欢迎回来，{{ username }}</div>
+          <div class="welcome-sub">祝您工作愉快</div>
+        </div>
+        <div class="welcome-right">
+          <div class="welcome-time">{{ currentTime }}</div>
+          <div class="welcome-date">{{ currentDate }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 统计卡片 -->
     <el-row :gutter="16" v-loading="loading">
       <el-col :xs="12" :sm="6" v-for="item in statCards" :key="item.key">
-        <el-card class="stat-card" shadow="hover" :body-style="{ padding: '20px' }">
+        <el-card class="stat-card" shadow="never" :body-style="{ padding: '24px 20px' }">
           <div class="stat-icon" :class="item.color">
-            <el-icon><component :is="item.icon" /></el-icon>
+            <el-icon :size="24"><component :is="item.icon" /></el-icon>
           </div>
           <div class="stat-value">{{ stats[item.key] || 0 }}</div>
           <div class="stat-label">{{ item.label }}</div>
@@ -18,47 +33,42 @@
       </el-col>
     </el-row>
 
-    <!-- 图表区域：柱状图（各部门员工分布）+ 饼图（学员状态分布） -->
+    <!-- 图表区域 -->
     <el-row :gutter="16" style="margin-top: 16px">
       <el-col :xs="24" :lg="14">
-        <el-card shadow="hover" v-loading="chartLoading">
+        <el-card shadow="never" class="content-card" v-loading="chartLoading">
           <template #header>
             <div class="card-header">
               <span>各部门员工分布</span>
-              <el-tag type="info" size="small">实时数据</el-tag>
+              <el-tag effect="plain" size="small" type="info">实时数据</el-tag>
             </div>
           </template>
-          <!-- 柱状图容器 -->
           <div ref="barChartRef" style="width: 100%; height: 320px"></div>
         </el-card>
       </el-col>
       <el-col :xs="24" :lg="10">
-        <el-card shadow="hover" v-loading="chartLoading">
+        <el-card shadow="never" class="content-card" v-loading="chartLoading">
           <template #header>
             <div class="card-header">
               <span>学员状态分布</span>
-              <el-tag type="info" size="small">实时数据</el-tag>
+              <el-tag effect="plain" size="small" type="info">实时数据</el-tag>
             </div>
           </template>
-          <!-- 饼图容器 -->
           <div ref="pieChartRef" style="width: 100%; height: 320px"></div>
         </el-card>
       </el-col>
     </el-row>
 
-    <!-- 快捷操作和最近动态区域 -->
+    <!-- 快捷操作和最近动态 -->
     <el-row :gutter="16" style="margin-top: 16px">
-      <!-- 快捷操作入口 -->
       <el-col :xs="24" :lg="10">
-        <el-card shadow="hover">
-          <template #header>
-            <div class="card-header">
-              <span>快捷操作</span>
-            </div>
-          </template>
+        <el-card shadow="never" class="content-card">
+          <template #header><div class="card-header"><span>快捷操作</span></div></template>
           <div class="shortcut-grid">
             <div class="shortcut-item" v-for="item in shortcuts" :key="item.path" @click="$router.push(item.path)">
-              <el-icon :color="item.color" :size="22"><component :is="item.icon" /></el-icon>
+              <div class="shortcut-icon" :style="{ background: item.color + '15', color: item.color }">
+                <el-icon :size="20"><component :is="item.icon" /></el-icon>
+              </div>
               <div>
                 <div class="shortcut-title">{{ item.title }}</div>
                 <div class="shortcut-desc">{{ item.desc }}</div>
@@ -67,24 +77,20 @@
           </div>
         </el-card>
       </el-col>
-      <!-- 最近操作动态 -->
       <el-col :xs="24" :lg="14">
-        <el-card shadow="hover" v-loading="logLoading">
+        <el-card shadow="never" class="content-card" v-loading="logLoading">
           <template #header>
             <div class="card-header">
               <span>最近动态</span>
               <el-button text type="primary" size="small" @click="$router.push('/log')">查看全部</el-button>
             </div>
           </template>
-          <!-- 空状态提示 -->
           <div v-if="recentLogs.length === 0" class="empty-state">
             <el-icon><Clock /></el-icon>
             <p>暂无操作记录</p>
           </div>
-          <!-- 动态列表 -->
           <div v-else class="activity-list">
             <div class="activity-item" v-for="log in recentLogs" :key="log.id">
-              <!-- 状态圆点：不同请求方法显示不同颜色 -->
               <span class="activity-dot" :class="getMethodColor(log.method)"></span>
               <div class="activity-content">
                 <span class="activity-user">{{ log.username || '未知用户' }}</span>
@@ -101,33 +107,27 @@
 </template>
 
 <script setup>
-/**
- * 仪表盘页面逻辑
- * 负责加载统计数据、初始化ECharts图表、获取最近操作日志
- */
 import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import * as echarts from 'echarts'
 import request from '../../utils/request'
 import { getDepts } from '../../api/dept'
 import { getLogs } from '../../api/log'
 
-// 各区域加载状态
 const loading = ref(true)
 const chartLoading = ref(true)
 const logLoading = ref(true)
-// 统计数据
 const stats = ref({})
-// 最近操作日志
 const recentLogs = ref([])
+const username = ref('管理员')
+const currentDate = ref('')
+const currentTime = ref('')
+let clockTimer = null
 
-// ECharts图表DOM引用
 const barChartRef = ref(null)
 const pieChartRef = ref(null)
-// ECharts图表实例（用于后续销毁和resize）
 let barChart = null
 let pieChart = null
 
-// 统计卡片配置
 const statCards = [
   { key: 'deptCount', label: '部门总数', icon: 'OfficeBuilding', color: 'blue' },
   { key: 'empCount', label: '员工总数', icon: 'UserFilled', color: 'green' },
@@ -135,172 +135,97 @@ const statCards = [
   { key: 'studentCount', label: '学员总数', icon: 'Avatar', color: 'pink' }
 ]
 
-// 快捷操作配置
 const shortcuts = [
-  { title: '新增员工', desc: '录入员工信息', icon: 'UserFilled', color: '#409eff', path: '/emp' },
-  { title: '新增班级', desc: '创建教学班级', icon: 'Collection', color: '#67c23a', path: '/class' },
-  { title: '学员管理', desc: '管理学员信息', icon: 'Avatar', color: '#e6a23c', path: '/student' },
-  { title: '数据统计', desc: '查看分析报表', icon: 'DataAnalysis', color: '#f56c6c', path: '/statistics' }
+  { title: '新增员工', desc: '录入员工信息', icon: 'UserFilled', color: '#6b8cff', path: '/emp' },
+  { title: '新增班级', desc: '创建教学班级', icon: 'Collection', color: '#5ec487', path: '/class' },
+  { title: '学员管理', desc: '管理学员信息', icon: 'Avatar', color: '#f0a76a', path: '/student' },
+  { title: '数据统计', desc: '查看分析报表', icon: 'DataAnalysis', color: '#e87474', path: '/statistics' }
 ]
 
-/**
- * 加载仪表盘统计数据
- */
+const particleStyle = (n) => ({
+  width: `${Math.random() * 3 + 1}px`,
+  height: `${Math.random() * 3 + 1}px`,
+  left: `${Math.random() * 100}%`,
+  top: `${Math.random() * 100}%`,
+  animationDelay: `${Math.random() * 8}s`,
+  animationDuration: `${Math.random() * 12 + 10}s`,
+})
+
+const updateTime = () => {
+  const now = new Date()
+  const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
+  const m = String(now.getMonth() + 1).padStart(2, '0')
+  const d = String(now.getDate()).padStart(2, '0')
+  currentDate.value = `${now.getFullYear()}年${m}月${d}日 ${weekDays[now.getDay()]}`
+  currentTime.value = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`
+}
+
 const loadData = async () => {
   loading.value = true
-  try {
-    const res = await request.get('/statistics/dashboard')
-    stats.value = res.data
-  } catch (e) { /* ignore */ }
+  try { const res = await request.get('/statistics/dashboard'); stats.value = res.data } catch (e) {}
   loading.value = false
 }
 
-/**
- * 初始化ECharts图表
- * 并行加载部门数据和学员数据，用于生成柱状图和饼图
- */
 const loadCharts = async () => {
   chartLoading.value = true
   try {
-    // 并行请求部门列表和学员列表
-    const [deptRes, studentRes] = await Promise.all([
-      getDepts(),
-      request.get('/students', { params: { page: 1, pageSize: 999 } })
-    ])
-
-    // 等待DOM更新完成后再初始化图表
+    const [deptRes, studentRes] = await Promise.all([getDepts(), request.get('/students', { params: { page: 1, pageSize: 999 } })])
     await nextTick()
-
-    // 初始化柱状图：展示各部门员工数量分布
     if (barChartRef.value) {
       barChart = echarts.init(barChartRef.value)
       const depts = deptRes.data || []
       barChart.setOption({
-        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, backgroundColor: 'rgba(255,255,255,0.95)', borderColor: '#e2e8f0', textStyle: { color: '#334155' } },
         grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
-        xAxis: { type: 'category', data: depts.map(d => d.name), axisLabel: { fontSize: 12 } },
-        yAxis: { type: 'value', minInterval: 1 },
-        series: [{
-          name: '部门',
-          type: 'bar',
-          barWidth: '45%',
-          data: depts.map(d => d.id * 3 + Math.floor(Math.random() * 5)),
-          itemStyle: {
-            borderRadius: [6, 6, 0, 0],
-            // 渐变色填充
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: '#409eff' },
-              { offset: 1, color: '#79bbff' }
-            ])
-          }
-        }]
+        xAxis: { type: 'category', data: depts.map(d => d.name), axisLabel: { fontSize: 12, color: '#94a3b8' }, axisLine: { lineStyle: { color: '#e2e8f0' } } },
+        yAxis: { type: 'value', minInterval: 1, axisLabel: { color: '#94a3b8' }, splitLine: { lineStyle: { color: '#f1f5f9' } } },
+        series: [{ type: 'bar', barWidth: '50%', data: depts.map(d => d.id * 3 + Math.floor(Math.random() * 5)), itemStyle: { borderRadius: [8, 8, 0, 0], color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#6b8cff' }, { offset: 1, color: '#a5b4fc' }]) } }]
       })
     }
-
-    // 初始化饼图：展示学员在读/休学/毕业状态分布
     if (pieChartRef.value) {
       pieChart = echarts.init(pieChartRef.value)
       const students = studentRes.data?.rows || []
-      // 状态映射
-      const studyMap = { 0: '在读', 1: '休学', 2: '毕业' }
-      const jobMap = { 0: '未就业', 1: '已就业' }
-      // 统计各状态人数
       const studyCounts = [0, 0, 0]
-      students.forEach(s => {
-        if (s.studyStatus !== undefined) studyCounts[s.studyStatus] = (studyCounts[s.studyStatus] || 0) + 1
-      })
+      students.forEach(s => { if (s.studyStatus !== undefined) studyCounts[s.studyStatus] = (studyCounts[s.studyStatus] || 0) + 1 })
       pieChart.setOption({
-        tooltip: { trigger: 'item', formatter: '{b}: {c}人 ({d}%)' },
-        legend: { bottom: '5%', itemWidth: 10, itemHeight: 10 },
-        color: ['#409eff', '#e6a23c', '#67c23a'],
-        series: [{
-          type: 'pie',
-          radius: ['40%', '65%'],
-          center: ['50%', '45%'],
-          avoidLabelOverlap: false,
-          itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
-          label: { show: false },
-          emphasis: { label: { show: true, fontSize: 14, fontWeight: 'bold' } },
-          data: [
-            { value: studyCounts[0], name: '在读' },
-            { value: studyCounts[1], name: '休学' },
-            { value: studyCounts[2], name: '毕业' }
-          ]
-        }]
+        tooltip: { trigger: 'item', formatter: '{b}: {c}人 ({d}%)', backgroundColor: 'rgba(255,255,255,0.95)', borderColor: '#e2e8f0', textStyle: { color: '#334155' } },
+        legend: { bottom: '5%', itemWidth: 10, itemHeight: 10, textStyle: { color: '#64748b' } },
+        color: ['#6b8cff', '#f0a76a', '#5ec487'],
+        series: [{ type: 'pie', radius: ['42%', '68%'], center: ['50%', '45%'], avoidLabelOverlap: false, itemStyle: { borderRadius: 8, borderColor: '#fff', borderWidth: 3 }, label: { show: false }, emphasis: { label: { show: true, fontSize: 14, fontWeight: 'bold' } }, data: [{ value: studyCounts[0], name: '在读' }, { value: studyCounts[1], name: '休学' }, { value: studyCounts[2], name: '毕业' }] }]
       })
     }
-
-    // 监听窗口resize事件，图表自适应
     window.addEventListener('resize', handleResize)
-  } catch (e) { /* ignore */ }
+  } catch (e) {}
   chartLoading.value = false
 }
 
-/**
- * 加载最近操作日志（取前6条）
- */
 const loadLogs = async () => {
   logLoading.value = true
-  try {
-    const res = await getLogs()
-    recentLogs.value = (res.data || []).slice(0, 6)
-  } catch (e) { /* ignore */ }
+  try { const res = await getLogs(); recentLogs.value = (res.data || []).slice(0, 6) } catch (e) {}
   logLoading.value = false
 }
 
-/**
- * 窗口大小变化时调整图表尺寸
- */
-const handleResize = () => {
-  barChart && barChart.resize()
-  pieChart && pieChart.resize()
-}
-
-/**
- * 根据请求方法返回对应的颜色类名
- * @param {string} method - HTTP请求方法
- * @returns {string} 颜色类名
- */
-const getMethodColor = (method) => {
-  const map = { POST: 'green', PUT: 'orange', DELETE: 'red' }
-  return map[method] || 'blue'
-}
-
-/**
- * 根据请求方法返回中文操作描述
- * @param {string} method - HTTP请求方法
- * @returns {string} 中文描述
- */
-const getMethodLabel = (method) => {
-  const map = { POST: '新增', PUT: '修改', DELETE: '删除' }
-  return map[method] || method
-}
-
-/**
- * 格式化时间为相对时间显示
- * @param {string} t - ISO格式时间字符串
- * @returns {string} 相对时间文本（如"刚刚"、"5分钟前"）
- */
+const handleResize = () => { barChart && barChart.resize(); pieChart && pieChart.resize() }
+const getMethodColor = (m) => ({ POST: 'green', PUT: 'orange', DELETE: 'red' }[m] || 'blue')
+const getMethodLabel = (m) => ({ POST: '新增', PUT: '修改', DELETE: '删除' }[m] || m)
 const formatTime = (t) => {
   if (!t) return ''
-  const d = new Date(t)
-  const now = new Date()
-  const diff = now - d
+  const d = new Date(t), diff = Date.now() - d
   if (diff < 60000) return '刚刚'
   if (diff < 3600000) return Math.floor(diff / 60000) + '分钟前'
   if (diff < 86400000) return Math.floor(diff / 3600000) + '小时前'
   return d.toLocaleDateString('zh-CN')
 }
 
-// 页面挂载时并行加载统计数据、图表和日志
 onMounted(() => {
+  updateTime()
+  clockTimer = setInterval(updateTime, 1000)
   loadData()
   loadCharts()
   loadLogs()
 })
-
-// 页面卸载时清理图表实例和事件监听
 onUnmounted(() => {
+  clearInterval(clockTimer)
   window.removeEventListener('resize', handleResize)
   barChart && barChart.dispose()
   pieChart && pieChart.dispose()
@@ -308,16 +233,137 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.dashboard { }
-/* 卡片头部样式 */
+/* ===== 欢迎横幅 ===== */
+.welcome-wrapper {
+  position: relative;
+  margin-bottom: 16px;
+  border-radius: 18px;
+  padding: 2px;
+  background: conic-gradient(from 0deg, #5b7fd5, #8b6ec8, #c47a8a, #c4956a, #5fb3a0, #5b8cff, #a78bfa, #5b7fd5);
+  animation: rotateBorder 6s linear infinite;
+}
+@keyframes rotateBorder {
+  from { filter: hue-rotate(0deg); }
+  to   { filter: hue-rotate(360deg); }
+}
+
+.welcome-banner {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28px 32px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  color: #fff;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* 装饰光斑 */
+.welcome-banner::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -10%;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, rgba(139, 110, 200, 0.12), transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.welcome-banner::after {
+  content: '';
+  position: absolute;
+  bottom: -25%;
+  left: 8%;
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, rgba(95, 179, 160, 0.10), transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: floatOrb 10s ease-in-out infinite alternate;
+}
+@keyframes floatOrb {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(40px, -25px) scale(1.08); }
+}
+
+/* 微粒子 */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  animation: float linear infinite;
+  pointer-events: none;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+  10% { opacity: 0.4; }
+  50% { transform: translateY(-45px) translateX(8px); opacity: 0.6; }
+  90% { opacity: 0.4; }
+}
+
+.welcome-left { z-index: 1; }
+.welcome-greeting {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+.welcome-sub {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.welcome-right { text-align: right; z-index: 1; }
+.welcome-time {
+  font-size: 38px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 3px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  line-height: 1;
+  margin-bottom: 6px;
+  background: linear-gradient(135deg, #fff 30%, rgba(255,255,255,0.7));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.welcome-date {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ===== 统计卡片 ===== */
+.stat-card {
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+.stat-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.07);
+}
+.stat-card:hover .stat-icon {
+  transform: scale(1.1);
+}
+.stat-icon {
+  transition: transform 0.3s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+/* ===== 卡片头部 ===== */
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-weight: 500;
+  font-size: 15px;
+  color: #1e293b;
 }
 
-/* 快捷操作网格布局 */
+/* ===== 快捷操作 ===== */
 .shortcut-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -326,93 +372,58 @@ onUnmounted(() => {
 .shortcut-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border-radius: 10px;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 14px;
   cursor: pointer;
-  transition: all 0.25s;
-  border: 1px solid #f0f0f0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  background: rgba(255, 255, 255, 0.5);
 }
 .shortcut-item:hover {
-  background: #f5f7fa;
-  border-color: #409eff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  background: rgba(255, 255, 255, 0.85);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
 }
-.shortcut-title {
-  font-size: 14px;
-  font-weight: 500;
-  color: #303133;
+.shortcut-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.3s;
 }
-.shortcut-desc {
-  font-size: 12px;
-  color: #c0c4cc;
-  margin-top: 2px;
-}
+.shortcut-item:hover .shortcut-icon { transform: scale(1.1); }
+.shortcut-title { font-size: 14px; font-weight: 500; color: #1e293b; }
+.shortcut-desc { font-size: 12px; color: #94a3b8; margin-top: 3px; }
 
-/* 活动动态列表 */
-.activity-list {
-  max-height: 320px;
-  overflow-y: auto;
-}
+/* ===== 活动动态 ===== */
+.activity-list { max-height: 340px; overflow-y: auto; }
 .activity-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 0;
-  border-bottom: 1px solid #f5f5f5;
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
   font-size: 13px;
+  transition: background 0.2s;
 }
+.activity-item:hover { background: rgba(0, 0, 0, 0.02); border-radius: 6px; }
 .activity-item:last-child { border-bottom: none; }
-/* 状态圆点 */
-.activity-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.activity-dot.green { background: #67c23a; }
-.activity-dot.orange { background: #e6a23c; }
-.activity-dot.red { background: #f56c6c; }
-.activity-dot.blue { background: #409eff; }
-.activity-content {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-wrap: wrap;
-}
-.activity-user {
-  font-weight: 500;
-  color: #303133;
-}
-.activity-action {
-  color: #909399;
-}
-.activity-url {
-  color: #c0c4cc;
-  font-size: 12px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 120px;
-}
-.activity-time {
-  color: #c0c4cc;
-  font-size: 12px;
-  white-space: nowrap;
-  margin-left: auto;
-}
+.activity-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.activity-dot.green { background: #5ec487; box-shadow: 0 0 6px rgba(94, 196, 135, 0.35); }
+.activity-dot.orange { background: #f0a76a; box-shadow: 0 0 6px rgba(240, 167, 106, 0.35); }
+.activity-dot.red { background: #e87474; box-shadow: 0 0 6px rgba(232, 116, 116, 0.35); }
+.activity-dot.blue { background: #6b8cff; box-shadow: 0 0 6px rgba(107, 140, 255, 0.35); }
+.activity-content { flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.activity-user { font-weight: 500; color: #1e293b; }
+.activity-action { color: #94a3b8; }
+.activity-url { color: #94a3b8; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px; }
+.activity-time { color: #94a3b8; font-size: 12px; white-space: nowrap; margin-left: auto; }
 
-/* 空状态样式 */
-.empty-state {
-  text-align: center;
-  padding: 40px 0;
-  color: #c0c4cc;
-}
-.empty-state .el-icon {
-  font-size: 40px;
-  margin-bottom: 8px;
-}
+/* ===== 空状态 ===== */
+.empty-state { text-align: center; padding: 48px 0; color: #94a3b8; }
+.empty-state .el-icon { font-size: 44px; margin-bottom: 10px; opacity: 0.5; }
 </style>
