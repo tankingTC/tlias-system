@@ -1,5 +1,11 @@
 <template>
   <el-container class="main-layout">
+    <!-- 第三层流光：小尺寸快速光斑，增强动态层次 -->
+    <div class="flow-orb flow-orb-1"></div>
+    <div class="flow-orb flow-orb-2"></div>
+    <div class="flow-orb flow-orb-3"></div>
+    <div class="flow-orb flow-orb-4"></div>
+
     <!-- 顶部导航：渐变流光 + 毛玻璃 -->
     <el-header class="header">
       <div class="header-left">
@@ -10,11 +16,11 @@
         <!-- Logo：蓝青渐变六边形 -->
         <svg class="logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M16 2L28 9v14l-12 7L4 23V9L16 2z" fill="url(#headerGrad)" />
-          <path d="M16 10l-5 3v6l5 3 5-3v-6l-5-3z" fill="rgba(255,255,255,0.6)" />
+          <path d="M16 10l-5 3v6l5 3 5-3v-6l-5-3z" fill="rgba(255,255,255,0.7)" />
           <defs>
             <linearGradient id="headerGrad" x1="4" y1="4" x2="28" y2="28">
-              <stop offset="0%" stop-color="#3b82f6" />
-              <stop offset="100%" stop-color="#06b6d4" />
+              <stop offset="0%" stop-color="#93b9eb" />
+              <stop offset="100%" stop-color="#8cc8e1" />
             </linearGradient>
           </defs>
         </svg>
@@ -103,8 +109,10 @@
           <el-breadcrumb-item v-if="currentTitle">{{ currentTitle }}</el-breadcrumb-item>
         </el-breadcrumb>
         <router-view v-slot="{ Component }">
-          <transition name="fade-transform" mode="out-in">
-            <component :is="Component" />
+          <transition name="fade-transform">
+            <keep-alive>
+              <component :is="Component" />
+            </keep-alive>
           </transition>
         </router-view>
       </el-main>
@@ -163,14 +171,114 @@ const handleCommand = (command) => {
   height: 100vh;
   overflow: hidden;
   position: relative;
-  background: linear-gradient(135deg, #e8f0fe, #dbeafe, #eff6ff, #e0e7ff);
-  background-size: 400% 400%;
-  animation: bgFlow 20s ease infinite;
+  /* 柔和浅色基底 */
+  background: #f4f7fc;
 }
-@keyframes bgFlow {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+
+/* ==================== 多层流光背景系统 ==================== */
+/* 使用伪元素 + transform 动画实现 GPU 加速的 60fps 流光效果 */
+/* 降饱和、提亮度，保留蓝-青-紫色彩基调 */
+.main-layout::before,
+.main-layout::after {
+  content: '';
+  position: absolute;
+  inset: -120px; /* 扩大区域避免动画露出边缘 */
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform;
+}
+
+/* 第一层：大尺寸柔光 — 慢速漂移，营造整体氛围 */
+.main-layout::before {
+  background:
+    radial-gradient(ellipse 650px 550px at 15% 20%,
+      rgba(167, 199, 239, 0.55) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 600px at 80% 15%,
+      rgba(178, 210, 245, 0.45) 0%, transparent 70%),
+    radial-gradient(ellipse 600px 500px at 70% 85%,
+      rgba(190, 200, 235, 0.4) 0%, transparent 70%),
+    radial-gradient(ellipse 550px 450px at 25% 80%,
+      rgba(170, 215, 240, 0.35) 0%, transparent 70%);
+  animation: flowLayer1 28s ease-in-out infinite alternate;
+}
+
+/* 第二层：中尺寸光斑 — 中速游走，增加动态层次 */
+.main-layout::after {
+  background:
+    radial-gradient(ellipse 380px 340px at 40% 35%,
+      rgba(186, 210, 248, 0.5) 0%, transparent 65%),
+    radial-gradient(ellipse 320px 380px at 65% 60%,
+      rgba(196, 220, 250, 0.4) 0%, transparent 65%),
+    radial-gradient(ellipse 350px 300px at 20% 65%,
+      rgba(200, 218, 245, 0.35) 0%, transparent 65%);
+  animation: flowLayer2 22s ease-in-out infinite alternate;
+}
+
+@keyframes flowLayer1 {
+  0%   { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(50px, -35px) scale(1.04); }
+  66%  { transform: translate(-30px, 25px) scale(0.97); }
+  100% { transform: translate(20px, -15px) scale(1.02); }
+}
+
+@keyframes flowLayer2 {
+  0%   { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(-40px, 30px) scale(1.05); }
+  66%  { transform: translate(35px, -20px) scale(0.96); }
+  100% { transform: translate(-15px, 40px) scale(1.03); }
+}
+
+/* 第三层：小尺寸快速光斑 — 小椭圆径向渐变，纯 transform 驱动，GPU 加速 */
+.flow-orb {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform;
+}
+.flow-orb-1 {
+  width: 300px; height: 280px;
+  background: radial-gradient(ellipse, rgba(165, 200, 240, 0.5) 0%, transparent 70%);
+  top: 10%; left: 30%;
+  animation: orbFloat1 18s ease-in-out infinite alternate;
+}
+.flow-orb-2 {
+  width: 240px; height: 260px;
+  background: radial-gradient(ellipse, rgba(175, 210, 245, 0.4) 0%, transparent 70%);
+  top: 50%; right: 15%;
+  animation: orbFloat2 15s ease-in-out infinite alternate;
+}
+.flow-orb-3 {
+  width: 280px; height: 220px;
+  background: radial-gradient(ellipse, rgba(185, 205, 240, 0.35) 0%, transparent 70%);
+  bottom: 10%; left: 10%;
+  animation: orbFloat3 20s ease-in-out infinite alternate;
+}
+.flow-orb-4 {
+  width: 200px; height: 200px;
+  background: radial-gradient(ellipse, rgba(170, 215, 235, 0.3) 0%, transparent 70%);
+  top: 30%; left: 55%;
+  animation: orbFloat4 16s ease-in-out infinite alternate;
+}
+@keyframes orbFloat1 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(60px, -40px) scale(1.08); }
+  100% { transform: translate(-30px, 50px) scale(0.95); }
+}
+@keyframes orbFloat2 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(-50px, 35px) scale(1.06); }
+  100% { transform: translate(40px, -25px) scale(0.97); }
+}
+@keyframes orbFloat3 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(45px, -55px) scale(1.1); }
+  100% { transform: translate(-35px, 30px) scale(0.93); }
+}
+@keyframes orbFloat4 {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(-40px, -30px) scale(1.05); }
+  100% { transform: translate(50px, 45px) scale(0.96); }
 }
 
 /* ==================== 顶部导航：透明玻璃 + 环绕流光 ==================== */
@@ -190,18 +298,18 @@ const handleCommand = (command) => {
   z-index: 10;
 }
 
-/* 环绕炫彩流光边框：conic-gradient + mask + hue-rotate */
+/* 环绕流光边框：降饱和柔和色 + hue-rotate */
 .header::before {
   content: '';
   position: absolute;
   inset: 0;
-  padding: 2px;
+  padding: 1.5px;
   background: conic-gradient(
     from 0deg,
-    #3b82f6,
-    #06b6d4,
-    #10b981,
-    #3b82f6
+    rgba(147, 185, 235, 0.8),
+    rgba(140, 200, 225, 0.7),
+    rgba(155, 205, 195, 0.65),
+    rgba(147, 185, 235, 0.8)
   );
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
@@ -212,7 +320,7 @@ const handleCommand = (command) => {
     linear-gradient(#fff 0 0);
   mask-composite: exclude;
   pointer-events: none;
-  animation: borderGlow 3s linear infinite;
+  animation: borderGlow 4s linear infinite;
 }
 @keyframes borderGlow {
   from { filter: hue-rotate(0deg); }
@@ -233,8 +341,8 @@ const handleCommand = (command) => {
   border-radius: 8px;
 }
 .collapse-btn:hover {
-  color: #3b82f6;
-  background: rgba(59, 130, 246, 0.08);
+  color: #7ba3d6;
+  background: rgba(147, 185, 235, 0.1);
 }
 .logo-icon {
   width: 30px;
@@ -244,7 +352,7 @@ const handleCommand = (command) => {
 .logo-text {
   font-size: 16px;
   font-weight: 700;
-  background: linear-gradient(135deg, #3b82f6, #06b6d4);
+  background: linear-gradient(135deg, #7ba3d6, #8cc8e1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: 0.5px;
@@ -264,8 +372,8 @@ const handleCommand = (command) => {
   transition: all 0.2s;
 }
 .header-icon:hover {
-  background: rgba(59, 130, 246, 0.08);
-  color: #3b82f6;
+  background: rgba(147, 185, 235, 0.1);
+  color: #7ba3d6;
 }
 .header-divider {
   width: 1px;
@@ -284,7 +392,7 @@ const handleCommand = (command) => {
 }
 .user-info:hover { background: rgba(0, 0, 0, 0.04); }
 .user-avatar {
-  background: linear-gradient(135deg, #3b82f6, #06b6d4) !important;
+  background: linear-gradient(135deg, #93b9eb, #8cc8e1) !important;
   color: #fff !important;
   font-weight: 600;
   font-size: 14px;
@@ -295,27 +403,38 @@ const handleCommand = (command) => {
   font-weight: 500;
 }
 
-/* ==================== 侧边栏：极光玻璃（增强版） ==================== */
+/* ==================== 侧边栏：极光玻璃（浅色柔和版） ==================== */
 .aside {
   position: relative;
-  background: rgba(15, 23, 42, 0.92) !important;
-  backdrop-filter: blur(16px) saturate(150%);
-  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  /* 优雅降级：不支持backdrop-filter时使用接近不透明的白色 */
+  background: rgba(255, 255, 255, 0.95) !important;
   border-right: none;
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.04),
+    1px 0 0 rgba(255, 255, 255, 0.6) inset; /* 模拟玻璃边缘高光 */
 }
 
-/* 背景微动画层：渐变色缓慢上下移动 */
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .aside {
+    /* 极致通透玻璃效果：参考登录页的高通透、高模糊、高饱和参数 */
+    background: rgba(255, 255, 255, 0.25) !important;
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+  }
+}
+
+/* 背景微动画层：浅色渐变缓慢上下移动 */
 .aside::before {
   content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(180deg,
-    rgba(59, 130, 246, 0.1),
-    rgba(6, 182, 212, 0.06),
-    rgba(139, 92, 246, 0.1),
-    rgba(236, 72, 153, 0.06)
+    rgba(147, 185, 235, 0.06),
+    rgba(140, 200, 225, 0.04),
+    rgba(175, 170, 220, 0.06),
+    rgba(210, 175, 200, 0.04)
   );
   background-size: 100% 200%;
   animation: sidebarBg 8s ease-in-out infinite alternate;
@@ -327,29 +446,23 @@ const handleCommand = (command) => {
   100% { background-position: 0% 100%; }
 }
 
-/* 右侧边缘发光线：蓝→青→绿垂直渐变 */
+/* 右侧边缘浅色分割线 */
 .aside::after {
   content: '';
   position: absolute;
   top: 0; bottom: 0; right: 0;
-  width: 2px;
+  width: 1px;
   background: linear-gradient(180deg,
     transparent,
-    rgba(59, 130, 246, 0.6),
-    rgba(6, 182, 212, 0.5),
-    rgba(16, 185, 129, 0.5),
+    rgba(0, 0, 0, 0.06),
+    rgba(0, 0, 0, 0.06),
     transparent
   );
-  animation: sideGlow 4s ease-in-out infinite;
   z-index: 2;
   pointer-events: none;
 }
-@keyframes sideGlow {
-  0%, 100% { opacity: 0.6; }
-  50%      { opacity: 1; }
-}
 
-/* 极光光晕：5色增强版 */
+/* 极光光晕：柔和浅色版 — 降饱和、提亮度，与主背景流光协调统一 */
 .aurora {
   position: absolute;
   border-radius: 50%;
@@ -359,31 +472,31 @@ const handleCommand = (command) => {
 }
 .aurora-1 {
   width: 240px; height: 240px;
-  background: rgba(59, 130, 246, 0.35);
+  background: rgba(147, 185, 235, 0.45);
   top: -50px; left: -50px;
   animation: drift1 14s ease-in-out infinite alternate;
 }
 .aurora-2 {
   width: 200px; height: 200px;
-  background: rgba(6, 182, 212, 0.3);
+  background: rgba(140, 200, 225, 0.38);
   top: 40%; left: 20%;
   animation: drift2 16s ease-in-out infinite alternate;
 }
 .aurora-3 {
   width: 220px; height: 220px;
-  background: rgba(16, 185, 129, 0.25);
+  background: rgba(155, 205, 195, 0.32);
   bottom: -30px; right: -20px;
   animation: drift3 14s ease-in-out infinite alternate;
 }
 .aurora-4 {
   width: 180px; height: 180px;
-  background: rgba(139, 92, 246, 0.28);
+  background: rgba(175, 170, 220, 0.35);
   top: 20%; right: -30px;
   animation: drift4 18s ease-in-out infinite alternate;
 }
 .aurora-5 {
   width: 160px; height: 160px;
-  background: rgba(236, 72, 153, 0.22);
+  background: rgba(210, 175, 200, 0.3);
   bottom: 20%; left: 10%;
   animation: drift5 15s ease-in-out infinite alternate;
 }
@@ -425,95 +538,99 @@ const handleCommand = (command) => {
 .aside :deep(.el-scrollbar__view) { background: transparent !important; }
 .aside :deep(.el-menu) { background: transparent !important; border-right: none !important; }
 
-/* 菜单项样式 */
+/* 菜单项样式优化 */
 .sidebar-menu :deep(.el-menu-item),
 .sidebar-menu :deep(.el-sub-menu__title) {
-  height: 38px;
-  line-height: 38px;
-  margin: 2px 6px;
+  height: 40px;
+  line-height: 40px;
+  margin: 4px 8px;
   border-radius: 8px;
-  color: rgba(255, 255, 255, 0.6) !important;
+  color: #475569 !important; /* 调整为柔和的深灰色 */
   background: transparent !important;
   position: relative;
-  transition: all 0.25s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 13px;
 }
+
+/* 图标过渡动画 */
+.sidebar-menu :deep(.el-menu-item .el-icon),
+.sidebar-menu :deep(.el-sub-menu__title .el-icon) {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), color 0.25s;
+}
+
+/* Hover 状态 */
 .sidebar-menu :deep(.el-menu-item:hover),
 .sidebar-menu :deep(.el-sub-menu__title:hover) {
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.2), rgba(6, 182, 212, 0.1)) !important;
-  color: #fff !important;
+  background: linear-gradient(90deg, rgba(147, 185, 235, 0.1), rgba(140, 200, 225, 0.04)) !important;
+  color: #1e293b !important;
 }
-.sidebar-menu :deep(.el-menu-item:hover)::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 50%;
-  transform: translateY(-50%);
-  width: 3px; height: 18px;
-  border-radius: 0 3px 3px 0;
-  background: rgba(59, 130, 246, 0.6);
-  box-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
+.sidebar-menu :deep(.el-menu-item:hover .el-icon),
+.sidebar-menu :deep(.el-sub-menu__title:hover .el-icon) {
+  transform: translateY(-2px); /* 悬浮时图标轻微上浮 */
+  color: #7ba3d6;
 }
+
+/* 激活状态 */
 .sidebar-menu :deep(.el-menu-item.is-active) {
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.25), rgba(6, 182, 212, 0.15)) !important;
-  color: #fff !important;
-  font-weight: 500;
+  background: linear-gradient(90deg, rgba(147, 185, 235, 0.14), rgba(140, 200, 225, 0.06)) !important;
+  color: #6a9ad4 !important; /* 柔和蓝色高亮 */
+  font-weight: 600;
 }
 .sidebar-menu :deep(.el-menu-item.is-active)::before {
   content: '';
   position: absolute;
-  left: 0; top: 50%;
+  left: -4px; top: 50%;
   transform: translateY(-50%);
-  width: 3px; height: 22px;
+  width: 4px; height: 20px;
   border-radius: 0 4px 4px 0;
-  background: linear-gradient(180deg, #3b82f6, #06b6d4);
-  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+  background: linear-gradient(180deg, #93b9eb, #8cc8e1);
+  box-shadow: 0 0 8px rgba(147, 185, 235, 0.3);
 }
 
-/* 子菜单 */
+/* 子菜单样式优化 */
 .sidebar-menu :deep(.el-sub-menu .el-menu-item) {
   min-width: auto;
-  padding-left: 44px !important;
-  color: rgba(255, 255, 255, 0.5) !important;
+  padding-left: 46px !important;
+  color: #64748b !important;
   background: transparent !important;
   position: relative;
   font-size: 13px;
+  height: 38px;
+  line-height: 38px;
 }
 .sidebar-menu :deep(.el-sub-menu .el-menu-item:hover) {
-  color: #fff !important;
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), rgba(6, 182, 212, 0.08)) !important;
+  color: #1e293b !important;
+  background: linear-gradient(90deg, rgba(147, 185, 235, 0.08), transparent) !important;
 }
-.sidebar-menu :deep(.el-sub-menu .el-menu-item:hover)::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 50%;
-  transform: translateY(-50%);
-  width: 3px; height: 18px;
-  border-radius: 0 3px 3px 0;
-  background: rgba(59, 130, 246, 0.5);
-  box-shadow: 0 0 6px rgba(59, 130, 246, 0.35);
+.sidebar-menu :deep(.el-sub-menu .el-menu-item:hover .el-icon) {
+  transform: translateY(-2px);
+  color: #7ba3d6;
 }
 .sidebar-menu :deep(.el-sub-menu .el-menu-item.is-active) {
-  color: #fff !important;
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.2), rgba(6, 182, 212, 0.12)) !important;
+  color: #6a9ad4 !important;
+  background: linear-gradient(90deg, rgba(147, 185, 235, 0.12), transparent) !important;
+  font-weight: 600;
 }
 .sidebar-menu :deep(.el-sub-menu .el-menu-item.is-active)::before {
   content: '';
   position: absolute;
-  left: 0; top: 50%;
+  left: -4px; top: 50%;
   transform: translateY(-50%);
-  width: 3px; height: 20px;
+  width: 4px; height: 18px;
   border-radius: 0 4px 4px 0;
-  background: linear-gradient(180deg, #3b82f6, #06b6d4);
-  box-shadow: 0 0 8px rgba(59, 130, 246, 0.45);
+  background: linear-gradient(180deg, #93b9eb, #8cc8e1);
+  box-shadow: 0 0 6px rgba(147, 185, 235, 0.25);
 }
 
+/* 子菜单箭头颜色 */
 .sidebar-menu :deep(.el-sub-menu__icon-arrow) {
-  color: rgba(255, 255, 255, 0.35) !important;
+  color: #94a3b8 !important;
 }
 
+/* 模块分割线 */
 .menu-divider {
   height: 1px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.06);
   margin: 10px 16px;
 }
 
